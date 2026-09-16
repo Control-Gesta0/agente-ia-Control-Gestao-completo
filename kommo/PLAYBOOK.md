@@ -99,7 +99,9 @@ uazapi webhook (in / out / fromMe → histórico COMPLETO, os 2 lados)
 
 | Ativo | Onde |
 |---|---|
-| **Template do agente (Kommo)** | `clientes/metriksales/agente-ia-kommo/` — **copiar esta pasta** |
+| **Template do agente (Kommo) v2 — dentro da skill** | `assets/agente-kommo/` — Desenho A, OpenAI, portas com roteador em código, travas, evals, discover. **Copiar esta pasta** e seguir `assets/agente-kommo/INSTALAR.md` (status honesto lá) |
+| Template v1 (Claude, Desenho A+B, voz) | skill do curso `agente-ia-crm/assets/kommo/` · dogfood `clientes/metriksales/agente-ia-kommo/` (pode não existir na máquina — `PEGADINHAS §16`) |
+| **Cliente já tem IA em n8n** | `../MIGRACAO-N8N.md` antes de qualquer passo |
 | **Produção de referência (dogfood Metrik)** | https://agente-ia-kommo-metriksales.vercel.app · projeto Vercel `agente-ia-kommo-metriksales` |
 | **Template GHL (irmão)** | `clientes/metriksales/agente-ia/` + `ghl/PLAYBOOK.md` |
 | **Doutrina comum** | `comum/ARQUITETURA.md` · `comum/CONTEXT-ENG.md` · `comum/EVALS.md` · `comum/PEGADINHAS.md` |
@@ -492,7 +494,7 @@ curl "https://<deploy>/api/links?secret=XXX"     # lista com as URLs prontas pra
 
 ## §12 · PROCESSO NUMA SESSÃO NOVA
 
-1. Invocar esta skill + **ler `clientes/metriksales/agente-ia-kommo/README.md`**
+1. Invocar esta skill + **ler `assets/agente-kommo/INSTALAR.md`** (e `MIGRACAO-N8N.md` se já existe IA na conta)
 2. **SEMPRE:** discovery ao vivo dos IDs **antes** do crm-map (a conta muda no mesmo dia) → review adversarial antes de cliente real → teste E2E com lead próprio → rampagem por tag
 
 ## §13 · DEPOIS DO GO-LIVE (o que faz o cliente ficar)

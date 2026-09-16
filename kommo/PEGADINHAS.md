@@ -29,10 +29,10 @@ A variante Kommo do agente serverless foi construída e deployada em **2026-07-1
 
 | Ativo | Onde |
 |---|---|
-| **Template do agente Kommo** | `clientes/metriksales/agente-ia-kommo/` — **copiar esta pasta** |
+| **Template do agente Kommo** | `assets/agente-kommo/` (v2, dentro da skill) — **copiar esta pasta** · v1 com voz: skill do curso `agente-ia-crm/assets/kommo/` (§16) |
 | **Produção de referência (dogfood Metrik)** | https://agente-ia-kommo-metriksales.vercel.app · projeto Vercel `agente-ia-kommo-metriksales` |
 
-**Processo de sessão nova:** invocar a skill + ler `clientes/metriksales/agente-ia-kommo/README.md`. Depois: discovery **AO VIVO** dos IDs antes do `crm-map` (a conta muda no mesmo dia), review adversarial antes de cliente real, E2E com lead próprio, rampagem por tag.
+**Processo de sessão nova:** invocar a skill + ler `assets/agente-kommo/INSTALAR.md` (e `MIGRACAO-N8N.md` se a conta já tem IA). Depois: discovery **AO VIVO** dos IDs antes do `crm-map` (a conta muda no mesmo dia), review adversarial antes de cliente real, E2E com lead próprio, rampagem por tag.
 
 ---
 
@@ -450,3 +450,168 @@ de submissão registram o estado atual e a autorização.
 
 **Evidência:** revisão solicitada às 13:04 e retirada às 13:11 de 30/07/2026
 (America/Sao_Paulo), por solicitação do mestre.
+
+---
+
+## §14 · A POSIÇÃO DA ETAPA NO FUNIL NÃO É PROGRESSO — GUARD ANTI-RETROCESSO TRAVA O AGENTE INTEIRO
+
+**Sintoma:** "a IA não está mudando o lead de etapa". O card fica parado, as
+colunas do agente aparecem sempre vazias, e o log não acusa erro nenhum.
+
+**Causa:** o guard anti-retrocesso usava a posição no `sort` do funil como
+escala de progresso (`currentIdx > targetIdx` → recusa). Funil de clínica não
+é linear: colunas no padrão "não marcou <procedimento>" e filas de repescagem
+("não atendeu", "não marcou geral") ficam DEPOIS das etapas do agente no
+`sort`, mas um card ali está **parado**, não adiantado. Bastava o time
+realocar o card por procedimento para o agente nunca mais conseguir movê-lo —
+em silêncio, porque a recusa é uma resposta de tool, não um erro.
+
+**Cura:** trocar a escala posicional por uma **lista explícita de etapas
+protegidas** (consulta marcada, pré-op, pagamento, agendamentos, alta, pós-op,
+descarte, opt-out, venda ganha/perdida). Fora dessas, o agente move. O
+`stageOrder` continua, mas só para RECONHECER a etapa atual (status fora da
+lista = mapa velho, fail-closed) e para o `/api/validate` acusar drift.
+
+**Anticorpo:** ao montar o `crm-map`, pergunte por cada coluna *"um lead aqui
+está ADIANTADO ou PARADO?"*. Só as adiantadas entram na lista protegida. E
+meça antes de culpar o modelo: os eventos `lead_status_changed` do Kommo dizem
+quem moveu (`created_by: 0` = integração).
+
+**Evidência:** clínica de cirurgia plástica em Kommo, medido 08–11/09/2026.
+24 colunas liberadas contra 19 protegidas; antes, 20 das 24 travavam. Medição
+que abriu o caso: 12 movimentos do agente em 72h, **todos** partindo da etapa
+de entrada, nenhum lead já realocado voltou a ser movido, e as 3 colunas do
+agente estavam vazias — o time realocava o card em 3 a 87 minutos.
+
+---
+
+## §15 · DUAS ETAPAS COM O MESMO `sort` VIRAM DRIFT FALSO NO /api/validate
+
+**Sintoma:** `/api/validate` acusa "ORDEM do stageOrder diverge da ordem real
+do funil" logo depois de você ter ressincronizado o mapa, e o diff do
+`crm-map.ts` sai com duas linhas ou nenhuma.
+
+**Causa:** o Kommo permite status diferentes com o **mesmo valor de `sort`** e
+não define ordem entre eles. Gerador do mapa e validador desempatavam de
+formas diferentes (um por `id`, o outro pela ordem de chegada da API, que o
+`sort` estável do JS preserva) — e a comparação de strings acusava divergência
+que não existe.
+
+**Cura:** desempatar pelo `id` nos DOIS lados (`a.sort - b.sort || a.id - b.id`).
+
+**Anticorpo:** qualquer comparação de ordem contra o CRM precisa de critério
+de desempate determinístico, senão o check vira alarme falso — e **guardião
+diário em cima de check instável é pior que não ter guardião**: o time aprende
+a ignorar o alerta.
+
+**Evidência:** 11/09/2026, duas etapas empatadas em `sort=10` ("Etapa de leads
+de entrada" e "conversa aberta") num funil de 44 status.
+
+---
+
+## §16 · O TEMPLATE "COPIE ESTA PASTA" NÃO EXISTIA NA MÁQUINA
+
+**Sintoma:** a skill manda copiar `clientes/metriksales/agente-ia-kommo/`; a
+pasta não existe na máquina nem no GitHub da organização, e a sessão fica entre
+travar o cliente ou reescrever o motor do zero (e reencontrar eco, mensagem
+duplicada e bot mudo).
+
+**Causa:** o template vivia só no dogfood de outra máquina. A skill apontava
+para um caminho, não carregava o código.
+
+**Cura:** o motor passou a morar DENTRO da skill: `assets/agente-kommo/`
+(Desenho A, OpenAI, portas, travas do Filipe, evals, discover). O template do
+curso (`agente-ia-crm/assets/kommo`) continua sendo a referência do Desenho B.
+
+**Anticorpo:** toda referência a template na skill aponta para `assets/`.
+Caminho fora da skill é "referência viva", nunca pré-requisito.
+
+**Evidência:** MTF Advocacia, 16/09/2026 — busca em todo o perfil do usuário e
+`gh repo list metrik-sales` sem a pasta; asset criado com `tsc` limpo e 32/32
+no `npm test`.
+
+## §17 · "CHAVE SECRETA" NÃO É TOKEN — 401
+
+**Sintoma:** o cliente manda um código de 64 caracteres da tela da integração e
+toda chamada à API volta 401.
+
+**Causa:** a tela da integração privada mostra a *chave secreta* (OAuth) e o
+*token de longa duração*. Só o segundo autentica `Bearer`, e é um JWT.
+
+**Cura:** pedir "o token de longa duração, que começa com eyJ". O
+`scripts/discover.ts` avisa quando o token não parece JWT.
+
+**Evidência:** MTF, 16/09/2026 — string de 64 caracteres → 401 em
+`/api/v4/account`; JWT enviado em seguida → 200.
+
+## §18 · curl NO GIT BASH COM COLCHETES NA URL FALHA CALADO
+
+**Sintoma:** `curl ".../leads?order[updated_at]=desc"` ou
+`events?filter[type][]=x` não grava o arquivo (o script seguinte quebra com
+"arquivo não encontrado") ou volta 400, sem mensagem clara.
+
+**Causa:** curl interpreta `[]` como *globbing* de URL. Some-se o §21 comum
+(UTF-8) e o Git Bash vira mau cliente HTTP para o Kommo.
+
+**Cura:** `curl -g` ou, melhor, Node/Python (`scripts/discover.ts`).
+
+**Evidência:** MTF, 16/09/2026 — `leads?limit=250&order[updated_at]=desc`
+sem `-g` não gerou arquivo; com `-g` → 200.
+
+## §19 · A IA ANTIGA SE DESCOBRE PELOS EVENTOS, NÃO PELO CLIENTE
+
+**Sintoma:** o cliente não sabe dizer qual campo o n8n preenche, qual webhook
+existe ou se o WhatsApp é oficial.
+
+**Cura (somente leitura):**
+- `GET /api/v4/webhooks` → consumidores (`add_message` = IA antiga; outros
+  sistemas com `add_lead/update_lead`);
+- `GET /api/v4/events` → `origin: "waba"` nas mensagens = oficial;
+- eventos `custom_field_<id>_value_changed` com `created_by: 0` repetidos = o
+  campo onde a automação deposita a resposta;
+- `bot_id` **não** sai na API: está no nó do n8n que chama `salesbot/run`.
+
+**Anticorpo:** reaproveitar o MESMO campo e o MESMO bot. Escrever num campo novo
+mudaria o volume de `update_lead` que terceiros (ex.: um serviço no Cloud Run)
+já recebem.
+
+**Evidência:** MTF, 16/09/2026 — campo `IA` alterado 25× em 100 eventos, nenhum
+lead com valor (o bot limpa), origem `waba`, 2 webhooks (n8n + serviço externo),
+bot lido no n8n.
+
+## §20 · "VOU ENCAMINHAR PARA A EQUIPE" SEM AÇÃO NO CRM — A PROMESSA QUE MENTE 🟥
+
+**Sintoma:** os prompts da IA antiga dizem "vou encaminhar seu caso como
+URGENTE para a equipe agora"; perguntado, o cliente responde "não encaminha".
+Nenhuma etapa, tarefa ou aviso — o lead de urgência humanitária espera sem que
+ninguém saiba. **`mente: true`.**
+
+**Causa:** o texto do prompt descrevia um processo que não existia no CRM.
+
+**Cura:** perguntar literalmente "o que acontece no CRM quando a IA termina?".
+Se a resposta for "nada", ou se implementa a ação (tag/tarefa/nota) ou o texto
+do prompt deixa de prometer encaminhamento imediato. Na MTF o cliente escolheu
+só remover a tag: o prompt diz que "a equipe dá continuidade por aqui" e o
+diário (`/api/executions`) lista os `urgente`.
+
+**Evidência:** MTF, 16/09/2026 — prompts BPC/Cessado/SE com "encaminhar como
+urgente"; resposta do cliente: "não encaminha".
+
+## §21 · GATE QUE ENTRA NA CHEGADA E SAI NO FIM: A REMOÇÃO PRECISA SER RELIDA
+
+**Sintoma possível:** a IA finaliza, a tag "sai com 200", e o lead continua
+atendido — ou volta a entrar com a tag e a IA responde com o estado velho
+("roteiro completo").
+
+**Causa:** PATCH de tags substitui o conjunto (§1) e array vazio não limpa; e a
+tag recolocada na re-entrada reabre um lead cujo estado Redis diz `finalizado`.
+
+**Cura:** `removeLeadTags` usa `tags_to_delete` e **relê o lead** para provar a
+remoção (senão lança erro). `processLead`: tag de gate presente + estado
+`finalizado` = novo ciclo (estado limpo).
+
+**Anticorpo:** teste de finalização no `npm test` (remove só o gate, mantém as
+outras tags) e item do E2E: "tag removida, conferida na API".
+
+**Evidência:** regra do cliente MTF (tag `ia` adicionada na entrada do lead,
+a IA remove ao terminar), 16/09/2026. `tags_to_delete` ainda **aguarda prova E2E**.

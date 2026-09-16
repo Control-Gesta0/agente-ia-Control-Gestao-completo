@@ -120,7 +120,7 @@ Um organismo serverless que vive **um por cliente**. Cada peça resolve uma dor 
 | **Escola (Fase 0) — código replicável já sanitizado** | `assets/escola/` (`agente/` + `central/` + `INSTALAR.md` com os 7 patches) |
 | **Cockpit Central v3 + ledger — código replicável sanitizado** | `assets/central-v3/` (5 áreas, Manrope leve, hover sem salto, Ensinar guiado, custo por execução e `INSTALAR.md`) |
 | **Central Autônoma v4.1 — upgrade replicável sanitizado** | `assets/central-v4/` (Briefing, comando, Flight Recorder, Radar, Mapa Vivo, Shadow protegido, E se?, Recibo e `FocusNav` com divulgação progressiva) |
-| Template Kommo (agente) | `clientes/metriksales/agente-ia-kommo/` |
+| **Template Kommo (agente) v2 — código dentro da skill** | `assets/agente-kommo/` (Desenho A, GPT-5.4 Mini, portas com roteador em código, travas anti-invenção, evals, discover · `INSTALAR.md`) · v1 com voz: skill do curso `agente-ia-crm/assets/kommo/` |
 | Códex (engine multi-produto) | `clientes/metriksales/codex/` |
 | Referências vivas no ar | `agente-ia-metriksales.vercel.app` · `central-ia-metriksales.vercel.app` · `agente-ia-kommo-metriksales.vercel.app` · `codex-metrik.vercel.app` |
 | Memória técnica | `reference_agente_ghl_claude.md` (pegadinhas comuns) |
@@ -182,6 +182,7 @@ Todo o resto (`lib/*`, `api/*`, Central) é **motor compartilhado** — e por is
 | **`RECUPERACAO.md`** ⭐ | Ao definir follow-up, instrumentar o agente ou montar a aba Recuperação | duas conversões (respondeu × concretizou), atribuição por toque/ciclo, fila, métricas, contrato do endpoint e definição de pronto |
 | **`FRONTEIRA.md`** | Ao decidir **o que construir a seguir** · quando alguém propuser uma feature nova | 47 propostas escaneadas em 8 frentes, julgadas por 3 lentes → **6 no pódio, 5 na 2ª onda, 7 no cemitério com o motivo** (pra ninguém reabrir). A ordem de compra que o júri bancou. Onde o agente está em relação ao estado da arte |
 | **`ESCOLA.md`** | Ao construir/evoluir a Central · quando o cliente pedir *"quero ajustar a IA sozinho"* · quando alguém propuser *"deixa ele editar o prompt"* | A aba **"Ensinar a IA"**: o cliente corrige, o sistema decide se vira prompt, exemplo, RAG ou ticket — **sem ele encostar no prompt**. Tela por tela com os textos reais, o pipeline do alfaiate, as 4 travas anti-quebra, o modelo de dados, o plano de 8,5 dias, os **riscos que ficam de pé (§8-B)** e a **FASE 0 JÁ CONSTRUÍDA (22/07/2026, GHL dogfood)** — código pronto e replicável em `assets/escola/`, 49/49 no teste de travas |
+| **`MIGRACAO-N8N.md`** | **Quando o cliente já tem IA em n8n** (ou outro bot) | Descobrir a IA antiga pela API, auditar os prompts antigos, gates disjuntos na rampagem, reaproveitar bot e campo, virada aprovada |
 | **`MONETIZACAO.md`** | Antes de renovar contrato · ao montar proposta · **antes de mostrar qualquer número de "lift" pro cliente** | 🚨 O **viés de seleção** que hoje infla a prova semanal, o holdout de 8 linhas que conserta, a escada de desfechos com o `n` de cada degrau, o baseline retroativo **que expira**, e por que atribuição de resultado — não qualidade — é o que mata contrato de IA |
 | **`ESCALA.md`** | Ao passar de ~10 clientes · ao pensar em produto vs. serviço | O que compõe a cada cliente novo e o que só soma, o fosso do portfólio, e o que quebra primeiro quando a carteira dobra |
 
@@ -286,6 +287,7 @@ Toda sessão que descobrir algo novo **escreve aqui na hora**, no arquivo certo 
 | Desenho da aba "Ensinar a IA" (o cliente corrigindo) | `ESCOLA.md` |
 | Prova de valor, holdout, precificação, renovação | `MONETIZACAO.md` |
 | O que quebra ao dobrar a carteira | `ESCALA.md` |
+| Migração de IA antiga (n8n, outro bot) | `MIGRACAO-N8N.md` |
 | Lei nova, postura, roteador | **este SKILL.md** |
 | **Código novo que outros clientes vão receber igual** | `assets/<feature>/` + o patch documentado no `INSTALAR.md` da pasta |
 

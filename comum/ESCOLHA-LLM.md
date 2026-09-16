@@ -202,6 +202,8 @@ chaves mascaradas e salva em `.env.bakeoff.local`, isolado da produção e ignor
 pelo Git. **Nunca peça para o mestre colar chave no chat.** Sem uma chave, marque
 o modelo como **não testado**; nunca invente placar.
 
+> **Filipe Oliveira (14/09/2026):** GPT-5.4 Mini em Chat Completions só aceita tools com `reasoning_effort: none`; raciocínio + tools exige Responses API (`comum/PEGADINHAS.md` §50). Com `none`, o modelo escorrega em tools (inventa campo, encaminha sem motivo, vaza JSON — §48/§49); as travas em código levaram a 84/84 e empataram com Responses/low (+11% latência, +7% custo). **Rode evals com 3+ repetições: 1 rodada escondeu 3 classes de falha.**
+
 ## 6 · Roteamento permitido e proibido
 
 - ❌ Haiku/nano “decide” antes do modelo principal: chamada e latência extras.

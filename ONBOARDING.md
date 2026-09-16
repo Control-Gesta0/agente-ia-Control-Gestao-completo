@@ -111,3 +111,8 @@ cliente.
 8. seguir `NOVO-CLIENTE.md` para build, evals, E2E, Central e rampagem.
 
 O Compiler economiza montagem. Os gates continuam sendo a prova.
+
+## 8 · Limitações conhecidas do Compiler (registrado 14/09/2026)
+
+- Exige `aiLimit = "Agendado"` literal: bloqueia cliente cuja alçada termina ANTES (ex.: "Qualificado" — mais restritivo e seguro). Tratar como override consciente até o gate aceitar "etapa ≤ Agendado".
+- Exige credencial `anthropic` e `groq` (áudio): desatualizado frente ao padrão OpenAI de `comum/MIDIA-PROVEDORES.md`. Evidência: Filipe Oliveira Advocacia, pendências 1, 3 e 5 do primeiro compile.

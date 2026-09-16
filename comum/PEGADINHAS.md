@@ -561,3 +561,41 @@ Depois: **as 3 pernas do ritual** (skill → Códex `npm run deploy` → plugin)
 **Anticorpo:** teste determinístico cobrindo número seco "11"/"as 9" casando; "16h" com colisão de dia resolvendo o dia OFERTADO (nunca o mais cedo); dia da semana citado pelo lead mandando; dia inexistente na oferta → null; e `buildDays` filtrando por dia pedido. Nunca confie no modelo pra fazer conta de data — o rótulo HOJE/AMANHÃ é código, igual à decisão de voz (§2).
 
 **Evidência (31/07/2026):** Psi Terapia/GHL. Varredura de 500 execuções do diário depois de o time reclamar "a IA confunde os agendamentos": número seco derrubou vários leads reais (Sandra "11", Lia "14", Sara "17"); "oferece um dia, o lead confirma, marca outro"; e Bárbara pediu "segunda" 3× e recebeu "sexta" (lead perdido). Após a correção: 27/27 testes determinísticos, 12/12 evals, deploy `2026.07.31-fix-agenda-dia-hora` Ready, diário sem erro novo.
+
+---
+
+## §48 · 🚨 "Evidência" que existe na conversa mas não fala do campo — a IA inventa resposta com prova falsa 🩸
+
+**Sintoma:** o lead diz "moramos em 4 e a renda somada dá 2.600" e o CRM recebe também "Já recebe outro benefício? = Não" e "Para quem = Para filho(a)" — perguntas que ninguém fez. No roteiro seguinte a IA "pula" a pergunta (já está preenchida), e o advogado recebe dado falso com cara de verdade.
+
+**Causa:** com `reasoning: none`, o GPT-5.4 Mini preenche por inferência o que parece óbvio. Uma primeira trava ("a evidência precisa aparecer no que o lead escreveu") NÃO bastou: o modelo passou como evidência uma frase real do lead (a da renda) para justificar um campo sem relação. Presença ≠ pertinência. Também usava "Não sabe" como coringa para campo não perguntado.
+
+**Cura (código):** toda resposta salva exige `evidencia` (trecho literal do lead) e o executor valida três coisas: (1) o trecho está no texto do lead; (2) o trecho contém os **sinais do campo** (`sinal` por campo no crm-map: benefício/INSS/aposent… para "outro benefício"; dígito para valores; pai/filho/mim para "para quem"); (3) "Não sabe" só com "não sei/não lembro" na evidência. Exceção obrigatória para resposta curta: "sim"/"não" vale quando a **última mensagem do escritório** era a pergunta daquele campo (overlap ≥ 0,6) — senão a trava bloqueia resposta legítima.
+
+**Anticorpo:** teste de tool com porta em memória: evidência sem relação → não grava; "não" respondendo a pergunta do campo → grava; "Não sabe" inventado → não grava. No eval, imprimir as ESCRITAS no CRM de cada rodada que falhar (sem isso o sintoma parece "pulou a ordem" e a causa real — invenção — fica escondida).
+
+**Evidência (14/09/2026):** Filipe Oliveira Advocacia/GHL, cenário `loas-renda`. 2 de 6 rodadas gravaram `outro_beneficio=Não` com a evidência da renda. Após sinais por campo: 84/84 conversas em 6 repetições, 0 invenção.
+
+---
+
+## §49 · GPT-5.4 Mini (Chat Completions, reasoning none) vaza sintaxe de tool e JSON como mensagem 🩸
+
+**Sintoma:** a resposta que iria ao WhatsApp foi `definir_tipo_caso({"tipo":"outro"}) to=functions.definir_tipo_caso 重庆时时彩…` (lixo em chinês/tailandês) e, em outra rodada, `{"respostas":[{"campo":"para_quem",…}]}` puro. Nenhum erro de API: `finish_reason` normal, conteúdo "válido".
+
+**Causa:** degeneração do modelo sem raciocínio no formato de tool calling; o argumento da tool sai no `content` em vez de `tool_calls`. Aparece em ~1 de 40 conversas, justamente nos cenários de ambiguidade/injeção.
+
+**Cura (código):** `checkReply` trata como `texto corrompido`: `to=functions.`, `nome({"`, JSON iniciando a mensagem ou chaves de argumento (`"campo":`, `"evidencia":`…) e alfabetos fora do latim (CJK/tailandês/devanágari/hangul). Violação → uma reescrita sem tools → se insistir, texto seguro. Nunca enviar `content` sem passar pela trava.
+
+**Anticorpo:** teste unitário com as duas strings reais acima. Rodar evals com **3 repetições** — com 1 rodada o vazamento não apareceu.
+
+**Evidência (14/09/2026):** Filipe Oliveira Advocacia, cenários `roteador-ambiguo` e `injection`.
+
+---
+
+## §50 · `reasoning_effort` + tools é recusado no Chat Completions do GPT-5.4 Mini 🟪
+
+**Sintoma:** ao testar `reasoning_effort: low` para estabilizar tools, TODA chamada volta 400: *"Function tools with reasoning_effort are not supported for gpt-5.4-mini in /v1/chat/completions. To use function tools, use /v1/responses or set reasoning_effort to 'none'."*
+
+**Cura:** raciocínio + tools no 5.4 Mini só pela **Responses API** (`input` com `function_call`/`function_call_output`, `store:false` + `include:['reasoning.encrypted_content']` e reenviar os itens de raciocínio junto das tools). Adapter atrás de env (`LLM_API=chat|responses`) — o loop e as travas não mudam.
+
+**Evidência (14/09/2026):** A/B no Filipe Oliveira, 14 cenários × 6 repetições: Chat/none **84/84**, 213s, US$0,074 por bateria · Responses/low 83/84, 237s (+11%), US$0,079 (+7%). Com travas determinísticas, o Chat/none empatou/venceu → ficou padrão; Responses fica como alternativa pronta.
