@@ -133,6 +133,8 @@ Um organismo serverless que vive **um por cliente**. Cada peça resolve uma dor 
 
 Todo o resto (`lib/*`, `api/*`, Central) é **motor compartilhado** — e por isso tem ritual de propagação (§7, 4ª perna).
 
+> 🔒 **Isolamento por cliente (regra do mestre, 16/09/2026).** Cada cliente é um **projeto NOVO na Vercel** (time Control Gestão, nome do cliente, ex.: `marilia-faria`), com **segredos próprios** e **prefixo Redis único** (ex.: `ak-mtf:`), mesmo dividindo a mesma conta Vercel e o mesmo database Upstash. Antes de escolher o prefixo, rode `SCAN` e confirme que ele não existe. Nunca reaproveite projeto, `.env` ou `.vercel/` de outro cliente. Dado de cliente misturado é incidente, não bug.
+
 ---
 
 ## §2 · O ROTEADOR — pergunte o CRM ANTES de tudo

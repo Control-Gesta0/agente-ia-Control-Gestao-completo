@@ -5,7 +5,7 @@ import { CRM_MAP, type Porta } from './crm-map'
 import { addUsage, emptyUsage, type Usage } from './execlog'
 import { checkReply, keepLastQuestion, type Violation } from './guards'
 import type { ChatMsg } from './history'
-import { buildTools, describeOpen, runTool, snapshot, type ToolCtx } from './tools'
+import { aplicarFinalizacao, buildTools, describeOpen, runTool, snapshot, type ToolCtx } from './tools'
 
 /**
  * Cérebro: GPT-5.4 Mini (Chat Completions, reasoning none) com loop próprio de
@@ -84,6 +84,7 @@ export function createBrain(opts: LlmOptions) {
       state.respondenteNome ? `Quem está digitando: ${state.respondenteNome} (${state.respondenteRelacao || 'relação não informada'})` : 'Quem está digitando: não confirmado',
       snap.preenchidos.length ? `Já respondido (NUNCA pergunte de novo): ${snap.preenchidos.map(p => `${p.campo.name} = ${p.valor}`).join(' · ')}` : 'Já respondido: nada ainda',
       state.outroAssunto ? `Outro assunto já registrado: ${state.outroAssunto}` : '',
+      ...CRM_MAP.alertas.filter(a => a.re.test(ctx.lastLeadText)).map(a => `⚠️ ALERTA DO SISTEMA (${a.nome}): ${a.aviso}`),
       describeOpen(ctx.porta, snap),
     ].filter(Boolean)
     return [
@@ -130,6 +131,10 @@ export function createBrain(opts: LlmOptions) {
     const turns = historyToMessages(history)
     if (!turns.length) return null
     const usage = emptyUsage()
+    // Abertura aprovada sai do código quando o turno é só o número do menu (zero token, zero variação)
+    if (lead.primeiroContatoDaPorta && ctx.porta.abertura && /^\s*(?:op[cç][aã]o\s*)?\d{1,2}️?⃣?\s*$/i.test(ctx.lastLeadText)) {
+      return { text: ctx.porta.abertura, toolsUsed: ['trava:abertura'], handoff: false, urgente: false, guard: [], usage }
+    }
     const toolsUsed: string[] = []
     let handoff = false
     let urgente = false
@@ -158,6 +163,15 @@ export function createBrain(opts: LlmOptions) {
       const text = (choice.message?.content || '').trim()
       if (!text) break
       const safe = await enforce(messages, text, usage, handoff, ctx.lastLeadText)
+      if (!handoff) {
+        const alerta = CRM_MAP.alertas.find(a => a.finaliza && a.re.test(ctx.lastLeadText) && a.finaliza.seResposta.test(safe.text))
+        if (alerta?.finaliza) {
+          await aplicarFinalizacao(ctx, alerta.finaliza.motivo, `Finalizado pelo código (alerta: ${alerta.nome}). Última mensagem do lead: ${ctx.lastLeadText.slice(0, 300)}`, alerta.finaliza.motivo === 'urgencia')
+          handoff = true
+          if (alerta.finaliza.motivo === 'urgencia') urgente = true
+          toolsUsed.push(`trava:finalizou-${alerta.finaliza.motivo}`)
+        }
+      }
       return { text: safe.text, toolsUsed, handoff, urgente, guard: safe.guard, usage }
     }
 

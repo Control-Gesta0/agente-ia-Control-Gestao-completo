@@ -14,44 +14,8 @@
  *     o padrão é o do cliente de origem: remover a tag de gate e mais nada.
  */
 
-export type CampoTipo = 'text' | 'textarea' | 'numeric' | 'select' | 'multiselect'
-
-export interface Campo {
-  key: string
-  /** field_id do lead no Kommo. 0 = só guarda no estado (não grava no card) */
-  id: number
-  /** nome que o MODELO vê */
-  name: string
-  /** nome real no Kommo (o validate compara) */
-  kommoName?: string
-  type: CampoTipo
-  /** select/multiselect: enum_id + texto EXATO do Kommo */
-  options?: Array<{ id: number; value: string }>
-  /** palavras que a evidência do lead precisa conter */
-  sinal?: RegExp
-  /** a pergunta do roteiro (a regra da resposta curta "sim/não" usa) */
-  pergunta?: string
-}
-
-export interface Porta {
-  id: string
-  label: string
-  /** número no menu; null = só por classificação de texto */
-  menu: number | null
-  /** false = sem agente ainda: manda `mensagemSemAgente` e finaliza */
-  ativa: boolean
-  /** arquivo em prompts/portas/ */
-  promptFile?: string
-  /** texto do lead que identifica esta porta SEM ambiguidade */
-  sinais: RegExp
-  /** chaves de CAMPOS na ordem do roteiro */
-  roteiro: string[]
-  /** chaves que precisam estar respondidas (ou "não sei", se texto) para finalizar como qualificado */
-  obrigatorios: string[]
-  mensagemSemAgente?: string
-}
-
-export interface Etapa { id: number; pipelineId: number; name: string; quando: string }
+import type { Alerta, Campo, Etapa, Porta } from './crm-map-types'
+export type { Alerta, Campo, CampoTipo, Etapa, Porta } from './crm-map-types'
 
 const CAMPOS = {
   nome: { key: 'nome', id: 0, name: 'Nome do lead', type: 'text', sinal: /[a-zà-ú]{2,}/i, pergunta: 'Pode me dizer seu nome?' },
@@ -112,6 +76,9 @@ export const CRM_MAP = {
     /** nota no card com resumo e respostas */
     nota: false,
   },
+
+  /** detecções em código que viram aviso no contexto (ex.: advogado ativo, menor, urgência) */
+  alertas: [] as Alerta[],
 
   /** alçada de etapas. Vazio = a IA NUNCA move etapa */
   etapas: [] as Etapa[],

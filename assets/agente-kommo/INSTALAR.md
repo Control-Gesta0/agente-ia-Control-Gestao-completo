@@ -29,7 +29,7 @@ add_message (Kommo) → /api/inbound (200 imediato)
 
 | Asset — copia inteiro, atualiza por cima | Patch — do cliente, NUNCA sobrescreva |
 |---|---|
-| `lib/agent.ts` `buffer.ts` `config.ts` `execlog.ts` `guards.ts` `history.ts` `kommo.ts` `llm.ts` `media.ts` `port.ts` `redis.ts` `reset.ts` `router.ts` `state.ts` `tools.ts` `transport.ts` | `lib/crm-map.ts` · `lib/regras.ts` |
+| `lib/agent.ts` `buffer.ts` `config.ts` `crm-map-types.ts` `execlog.ts` `guards.ts` `history.ts` `kommo.ts` `llm.ts` `media.ts` `port.ts` `redis.ts` `reset.ts` `router.ts` `state.ts` `tools.ts` `transport.ts` | `lib/crm-map.ts` · `lib/regras.ts` |
 | `api/*` | `prompts/nucleo.md` · `prompts/portas/*` |
 | `scripts/env.ts` `discover.ts` `evals.ts` `simulate-inbound.ts` `create-webhook.ts` `test-guards.ts` | `scripts/test-cliente.ts` · `evals/cenarios.ts` |
 | `package.json` `tsconfig.json` `vercel.json` | `.env.local` · envs da Vercel · `.vercel/` |

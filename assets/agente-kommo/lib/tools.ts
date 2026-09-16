@@ -2,6 +2,7 @@ import type OpenAI from 'openai'
 import { CRM_MAP, campoByKey, type Campo, type Porta } from './crm-map'
 import { DISSE_NAO_SEI, evidenceFound, matchOption, overlap, parseNumeroBR } from './guards'
 import type { KommoFieldValue } from './kommo'
+import { classificar } from './router'
 import type { LeadState } from './state'
 
 /**
@@ -47,6 +48,7 @@ const SINAL_MOTIVO: Partial<Record<Motivo, RegExp>> = {
   advogado_ativo: /advogad|processo|recurso|escrit[oó]rio|a[cç][aã]o/i,
   menor_de_idade: /\b(1[0-7]|[5-9])\s*anos\b|menor|col[eé]gio|escola|minha m[aã]e|meu pai/i,
   urgencia: /comida|fome|comer|rem[eé]dio|medica|despej|aluguel atrasad|na rua|intern|hospital|urgent|desesper/i,
+  desistiu: /desist|n[aã]o (quero|tenho interesse|preciso) mais|deixa (pra|para) l[aá]|pode encerrar|n[aã]o quero continuar|n[aã]o vou (querer|continuar)/i,
   pediu_humano: /humano|pessoa|atendente|advogad|doutor|dra?\b|falar com|me liga|liga[cç][aã]o|reclam/i,
 }
 
@@ -99,7 +101,7 @@ export function buildTools(porta: Porta): OpenAI.Chat.ChatCompletionTool[] {
       type: 'function',
       function: {
         name: 'registrar_outro_assunto',
-        description: 'O lead trouxe um assunto de OUTRA área no meio da conversa. Registra para a equipe; você continua no assunto atual.',
+        description: 'O lead trouxe um assunto de OUTRA ÁREA atendida pelo escritório (outro serviço, não uma dúvida do assunto atual). Registra para a equipe; você continua no assunto atual.',
         parameters: {
           type: 'object',
           properties: { assunto: { type: 'string' }, evidencia: { type: 'string', description: 'Trecho literal do lead' } },
@@ -112,14 +114,13 @@ export function buildTools(porta: Porta): OpenAI.Chat.ChatCompletionTool[] {
       type: 'function',
       function: {
         name: 'finalizar_atendimento',
-        description: 'Encerra a participação da IA nesta conversa. Use quando: o roteiro obrigatório está completo (qualificado); o lead tem advogado ativo no caso; quem escreve é menor de idade; há urgência humanitária; o assunto está fora do escopo; o lead pediu humano; ou desistiu. Depois disso envie a mensagem de encerramento e NÃO faça perguntas.',
+        description: 'Encerra a participação da IA nesta conversa. Chame ANTES de escrever a mensagem de encerramento. Use quando: o roteiro obrigatório está completo (qualificado); o lead tem advogado ativo no caso; quem escreve é menor de idade; há urgência humanitária; o assunto está fora do escopo; o lead pediu humano; ou desistiu. Depois disso envie a mensagem de encerramento e NÃO faça perguntas.',
         parameters: {
           type: 'object',
           properties: {
             motivo: { type: 'string', enum: [...MOTIVOS] },
             evidencia: { type: 'string', description: 'Trecho literal do lead que justifica o motivo (dispensado para "qualificado")' },
             resumo: { type: 'string', description: '2 a 4 frases para a equipe: quem é, a situação e o que busca' },
-            sem_resposta: { type: 'array', items: { type: 'string', enum: porta.roteiro.length ? porta.roteiro : ['-'] }, description: 'Campos que o lead disse não saber' },
           },
           required: ['motivo', 'resumo'],
           additionalProperties: false,
@@ -229,6 +230,8 @@ export async function runTool(ctx: ToolCtx, name: string, input: Record<string, 
           const campo = porta.roteiro.includes(key) ? campoByKey(key) : undefined
           if (!campo) { erros.push(`"${key}" não é do roteiro desta porta`); continue }
           const ev = String(r.evidencia || '')
+          // Já respondido não se regrava (o modelo às vezes reaproveita uma frase qualquer para sobrescrever)
+          if (state.respostas?.[key]) { erros.push(`${campo.name} já estava respondido (${state.respostas[key]}) — não pergunte de novo`); continue }
           const valor = String(r.valor ?? '')
           const naoSei = DISSE_NAO_SEI.test(ev)
           // "sim"/"não" curto vale quando responde exatamente a pergunta deste campo
@@ -241,7 +244,10 @@ export async function runTool(ctx: ToolCtx, name: string, input: Record<string, 
             salvos.push(`${campo.name} = (não sabe)`)
             continue
           }
-          const c = coerce(campo, valor, lead.fields[campo.id]?.enumIds)
+          // Texto: guarda as PALAVRAS DO LEAD. Se o modelo resumiu ("Outra pessoa da família"), vale a evidência literal.
+          // Texto guarda as PALAVRAS DO LEAD (a evidência literal), nunca o resumo do modelo
+          const bruto = campo.type === 'text' || campo.type === 'textarea' ? ev : valor
+          const c = coerce(campo, bruto, lead.fields[campo.id]?.enumIds)
           if ('error' in c) { erros.push(c.error); continue }
           respostas[key] = c.texto
           salvos.push(`${campo.name} = ${c.texto}`)
@@ -263,7 +269,10 @@ export async function runTool(ctx: ToolCtx, name: string, input: Record<string, 
       }
 
       case 'registrar_outro_assunto': {
+        const citado = `${input.assunto || ''} ${input.evidencia || ''}`
         if (!evidenceFound(String(input.evidencia || ''), ctx.leadText)) return err('Não registrado: o lead não citou esse assunto.')
+        // Só vale assunto de OUTRA área atendida (sinal de outra porta). Renda, saúde, dúvida do roteiro NÃO são outro assunto.
+        if (!classificar(citado).some(p => p.id !== porta.id)) return err('Não registrado: isso faz parte do assunto atual, não de outra área. Responda dentro do roteiro.')
         await port.patchState({ outroAssunto: String(input.assunto || '').slice(0, 200) })
         return ok('Registrado para a equipe. Diga ao lead que a equipe também verá esse assunto e SIGA o roteiro atual.')
       }
@@ -273,9 +282,10 @@ export async function runTool(ctx: ToolCtx, name: string, input: Record<string, 
         if (!MOTIVOS.includes(motivo)) return err(`Motivo inválido: ${motivo}`)
         const state = await port.getState()
         if (motivo === 'qualificado') {
-          const sem = new Set([...(state.semResposta || []), ...(Array.isArray(input.sem_resposta) ? input.sem_resposta.map(String) : [])])
+          // "Não sabe" só vale se foi registrado por salvar_respostas com a fala do lead — nunca declarado na finalização
+          const sem = new Set(state.semResposta || [])
           const faltando = porta.obrigatorios.filter(key => !state.respostas?.[key] && !(sem.has(key) && !campoByKey(key)?.options))
-          if (faltando.length) return err(`Ainda falta: ${faltando.map(key => campoByKey(key)?.name || key).join('; ')}. ${describeOpen(porta, snapshot(porta, state))}`)
+          if (faltando.length) return err(`Ainda falta: ${faltando.map(key => campoByKey(key)?.name || key).join('; ')}. ${describeOpen(porta, snapshot(porta, state))} Se o lead disse que não sabe, grave com salvar_respostas usando a fala dele como evidência.`)
         } else {
           const ev = String(input.evidencia || '')
           const sinal = SINAL_MOTIVO[motivo]

@@ -54,7 +54,11 @@ async function main() {
   const REPS = Number(process.env.EVAL_REPS || 1)
   const filtros = process.argv.slice(2)
   const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
-  const brain = createBrain({ apiKey: process.env.OPENAI_API_KEY!, model: MODEL })
+  let mundoAtual: World | null = null
+  const brain = createBrain({
+    apiKey: process.env.OPENAI_API_KEY!, model: MODEL,
+    onTool: (nome, input, out) => { mundoAtual?.log.push(`${nome}(${JSON.stringify(input).slice(0, 200)}) → ${out.isError ? 'ERRO ' : ''}${out.content.slice(0, 200)}`) },
+  })
   const GATE = (process.env.GATE_TAG || 'gate').toLowerCase()
 
   function memoryPort(w: World): LeadPort {
@@ -80,6 +84,7 @@ async function main() {
       const w: World = { statusId: 1, pipelineId: 1, fields: {}, tags: new Set([GATE]), notes: [], state: { porta: porta.id, portaEm: 0, ...(c.state || {}) }, log: [] }
       const history: ChatMsg[] = (c.historico || []).map(([dir, text], i) => ({ id: `h${i}`, dir, text, ts: i + 1 }))
       const turnos: Turno[] = []
+      mundoAtual = w
       for (const msg of c.msgs) {
         if (w.state.finalizado) break
         history.push({ id: `m${history.length}`, dir: 'in', text: msg, ts: history.length + 1 })
@@ -117,7 +122,7 @@ async function main() {
         console.log(transcript.split('\n').map(l => `   ${l}`).join('\n'))
         for (const f of falhasCodigo) console.log(`   ⛔ código: ${f}`)
         for (const f of falhasJuiz) console.log(`   ⛔ juiz: ${f.criterio} — ${f.porque}`)
-        console.log(`   escritas: ${w.log.join(' · ') || '(nenhuma)'} · tools: ${turnos.flatMap(t => t.tools).join(', ') || '—'}`)
+        for (const l of w.log) console.log(`   · ${l}`)
       }
     }
   }

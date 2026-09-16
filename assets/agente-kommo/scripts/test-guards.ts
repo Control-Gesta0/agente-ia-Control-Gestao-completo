@@ -100,7 +100,7 @@ async function main() {
   }
 
   const extra = await import('./test-cliente').catch(() => null)
-  if (extra?.default) falhas += await extra.default(eq)
+  if (extra?.default) { const extras = await extra.default(eq); falhas += extras }
 
   console.log(falhas ? `\n❌ ${falhas} falha(s)` : '\n✅ Todas as travas OK')
   process.exit(falhas ? 1 : 0)
