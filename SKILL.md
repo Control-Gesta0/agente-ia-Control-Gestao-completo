@@ -1,15 +1,55 @@
 ---
 name: agente-ia-metrik-completo
-description: A skill COMPLETA (interna Metrik) de agentes de IA SDR em CRM sem n8n — GoHighLevel E Kommo no mesmo lugar. LLM + Vercel serverless + Upstash Redis. Atende WhatsApp, entende áudio/imagem/PDF e pode responder por voz com arquitetura multimodal escolhida por evidência (OpenAI simples ou provedores especializados), qualifica, move funil, agenda, faz followup/recuperação, rastreia origem/UTM, e roda o organismo de governança (guardião diário, analista semanal, auditora de funil, alertas no grupo, diário de execuções com custo, Central de IA do cliente, cérebro editável com o eval como porteiro, ESCOLA/"Ensinar a IA"). A Central segue um PADRÃO CANÔNICO (CENTRAL.md, v4.1 Autônoma em camadas): cockpit de 5 áreas, Briefing Executivo, Pergunte à Central, Flight Recorder, Radar de Dinheiro, Mapa Vivo, Shadow Lab econômico, Modo E se?, Recibo de Valor, divulgação progressiva, ledger histórico e régua de destino do conhecimento (prompt × catálogo × RAG × exemplo × mídia × tool), dark/light/mobile, versionada e propagável. MODO PROFESSOR + EXECUTOR - diagnostica antes de construir, explica trade-off, corrige com evidência medida, e leva até produção com prova. Biblioteca - comum/ + ghl/ + kommo/. Use para QUALQUER trabalho de agente de IA em CRM - construir, replicar, depurar, evoluir prompt/evals/custo/Central, auditar arquitetura ou ensinar. SUBSTITUI as skills antigas agente-ia-ghl e agente-ia-kommo.
+description: "Skill COMPLETA (interna Metrik) de agentes de IA SDR em CRM sem n8n - GoHighLevel E Kommo no mesmo lugar. LLM + Vercel serverless + Upstash Redis: atende WhatsApp, entende audio/imagem/PDF, responde por voz, qualifica, move funil, agenda, faz followup/recuperacao, rastreia origem/UTM e roda a governanca (guardiao diario, analista semanal, auditora de funil, diario de execucoes com custo, Central de IA do cliente no padrao CENTRAL.md v4.1, cerebro editavel com o eval como porteiro, ESCOLA). Todo texto que o lead le passa pelo filtro de TOM HUMANO (skill humanizer) antes de virar prompt, followup ou template. MODO PROFESSOR + EXECUTOR: diagnostica antes de construir, explica trade-off, corrige com evidencia medida e leva ate producao com prova. Use para QUALQUER trabalho de agente de IA em CRM - construir, replicar, depurar, evoluir prompt/evals/custo/Central, auditar arquitetura ou ensinar."
 ---
 
 # Agente de IA em CRM sem n8n — a skill COMPLETA (GHL + Kommo)
 
 > **Esta skill não é um manual: é um professor que também executa.** Ela conduz quem constrói (você, o time, um mentorado) do diagnóstico ao agente **em produção, com prova** — ensinando o porquê de cada escolha, não só o passo. Produto validado em produção real desde jul/2026 (Metrik Sales e clientes).
 >
-> **Escopo:** substitui e funde `agente-ia-ghl` (893 linhas) + `agente-ia-kommo` (157 linhas). O que vale pros DOIS CRMs vive em `comum/`; o que é da plataforma vive em `ghl/` ou `kommo/`. **Nenhum arquivo aqui depende de outra skill.**
+> **Escopo:** substitui e funde `agente-ia-ghl` (893 linhas) + `agente-ia-kommo` (157 linhas). O que vale pros DOIS CRMs vive em `comum/`; o que é da plataforma vive em `ghl/` ou `kommo/`. **Nenhum arquivo aqui depende de outra skill.** *(Exceção declarada e única: a skill `humanizer` é usada como filtro de tom em §5.1 — se ela não estiver na sessão, o checklist de §5.1 vale sozinho.)*
 >
 > **Uso:** INTERNA (atender cliente) e MENTORIA. Aqui tem tudo — números medidos, cicatrizes com data, IDs reais do dogfood, operação multi-cliente. A versão sanitizada pra distribuir é gerada depois pelo `sync.py`.
+
+## §-1 · A BIBLIOTECA (faça isto ANTES de operar)
+
+Este `SKILL.md` é o índice e a doutrina. **Todo arquivo citado aqui** (`comum/*.md`,
+`ghl/*.md`, `kommo/*.md`, `assets/**`, `scripts/*`, e os manuais longos
+`NOVO-CLIENTE.md`, `CENTRAL.md`, `ESCOLA.md`, `MONETIZACAO.md`, `ESCALA.md`,
+`AUTONOMIA.md`, `FRONTEIRA.md`, `ONBOARDING.md`, `QUESTIONARIO-CLIENTE.md`,
+`RECUPERACAO.md`) vive no repositório e **precisa ser clonado na sessão**:
+
+```bash
+git clone --depth 1 https://github.com/Control-Gesta/agente-ia-metrik-completo.git /tmp/metrik-skill
+```
+
+Depois disso, `comum/DIAGNOSTICO.md` significa `/tmp/metrik-skill/comum/DIAGNOSTICO.md`.
+Clone **uma vez por sessão**, na primeira vez que precisar de qualquer referência, e leia
+**só o arquivo que a tarefa pede** — não carregue a biblioteca inteira.
+
+> `raw.githubusercontent.com` costuma ser bloqueado no proxy; use `git clone` (github.com),
+> que funciona. Se o clone falhar, diga isso ao mestre e peça os arquivos em anexo — não
+> invente o conteúdo de uma referência que você não leu.
+
+### Mapa rápido
+
+| Preciso de… | Arquivo |
+|---|---|
+| Perguntas de diagnóstico antes de construir | `comum/DIAGNOSTICO.md` |
+| Desenho do fluxo / órgãos do agente | `comum/ARQUITETURA.md` |
+| Prompt, cache, tokens, limiares medidos | `comum/CONTEXT-ENG.md` |
+| **Tirar a cara de IA do texto (prompt, mensagem, followup, Central)** | **§5.1 + skill `humanizer`** |
+| Escolher o modelo | `comum/ESCOLHA-LLM.md` |
+| Evals (o porteiro do deploy) | `comum/EVALS.md` |
+| Áudio, imagem, PDF, voz | `comum/MIDIA-PROVEDORES.md` |
+| Navegador autenticado / UI-only | `comum/OPERACAO-VISUAL.md` |
+| Playground "Testar ao vivo" | `comum/PLAYGROUND.md` |
+| Cicatrizes que valem pros dois CRMs | `comum/PEGADINHAS.md` |
+| Passo a passo do CRM | `ghl/PLAYBOOK.md` · `kommo/PLAYBOOK.md` |
+| Bug específico do CRM | `ghl/PEGADINHAS.md` · `kommo/PEGADINHAS.md` |
+| Condução de cliente novo | `NOVO-CLIENTE.md` + `QUESTIONARIO-CLIENTE.md` |
+| Código da Central / ESCOLA / briefing | `assets/central-v4/`, `assets/escola/`, `assets/daily-briefing/`, `assets/operations-room/`, `assets/booking-alert/`, `assets/onboarding/` (cada um tem `INSTALAR.md`) |
+| Auditar a própria skill | `scripts/audit-skill.mjs` |
 
 ---
 
@@ -44,6 +84,8 @@ OAuth multitenant, ZIP e moderação, usar a skill global
 `kommo-widget-metrik`. O agente SDR continua nesta skill; não misture o ouro
 operacional do agente com o pacote público do widget. A implementação dogfood
 canônica fica em `clientes/metriksales/metrik-sales-layer/packages/kommo-widget/`.
+
+**11. TEXTO QUE O LEAD LÊ NÃO PODE CHEIRAR A IA.** Prompt com cara de IA produz agente com cara de IA, e no WhatsApp brasileiro o lead identifica em duas mensagens. Todo texto destinado ao lead — `prompt.md`, few-shots, cadências de followup e recuperação, templates — passa pelo filtro de tom **antes** do sandbox: §5.1 + skill `humanizer`. Vale também pro que EU escrevo pro mestre e pro cliente (Central, relatório semanal, ClickUp, proposta): travessão, tríade e fecho vazio derrubam a percepção de quem paga.
 
 ### O contrato obrigatório de condução
 
@@ -120,20 +162,18 @@ Um organismo serverless que vive **um por cliente**. Cada peça resolve uma dor 
 | **Escola (Fase 0) — código replicável já sanitizado** | `assets/escola/` (`agente/` + `central/` + `INSTALAR.md` com os 7 patches) |
 | **Cockpit Central v3 + ledger — código replicável sanitizado** | `assets/central-v3/` (5 áreas, Manrope leve, hover sem salto, Ensinar guiado, custo por execução e `INSTALAR.md`) |
 | **Central Autônoma v4.1 — upgrade replicável sanitizado** | `assets/central-v4/` (Briefing, comando, Flight Recorder, Radar, Mapa Vivo, Shadow protegido, E se?, Recibo e `FocusNav` com divulgação progressiva) |
-| **Template Kommo (agente) v2 — código dentro da skill** | `assets/agente-kommo/` (Desenho A, GPT-5.4 Mini, portas com roteador em código, travas anti-invenção, evals, discover · `INSTALAR.md`) · v1 com voz: skill do curso `agente-ia-crm/assets/kommo/` |
+| Template Kommo (agente) | `clientes/metriksales/agente-ia-kommo/` |
 | Códex (engine multi-produto) | `clientes/metriksales/codex/` |
 | Referências vivas no ar | `agente-ia-metriksales.vercel.app` · `central-ia-metriksales.vercel.app` · `agente-ia-kommo-metriksales.vercel.app` · `codex-metrik.vercel.app` |
 | Memória técnica | `reference_agente_ghl_claude.md` (pegadinhas comuns) |
 
 ### Só 3 coisas mudam por cliente (vale nos dois CRMs)
 
-1. **`prompt.md`** — personalidade, portas, catálogo, limites (o cérebro)
+1. **`prompt.md`** — personalidade, portas, catálogo, limites (o cérebro) — **e passa por §5.1 antes de subir**
 2. **`lib/crm-map.ts`** — os IDs **AO VIVO** com o `quando` de cada etapa e campo (no Kommo, **também os `enum_id`s** — select/multiselect gravam por enum_id, não por texto)
 3. **Env vars** — credenciais + `WEBHOOK_SECRET` NOVO por cliente + `GATE_TAG` + `CLIENT_NAME` + `CENTRAL_SECRET` (só quando entregar a Central ao cliente — **é ele que cria o perfil `dono`**; sem ele todo mundo entra como `agencia` e a trava do editor cru não protege ninguém)
 
 Todo o resto (`lib/*`, `api/*`, Central) é **motor compartilhado** — e por isso tem ritual de propagação (§7, 4ª perna).
-
-> 🔒 **Isolamento por cliente (regra do mestre, 16/09/2026).** Cada cliente é um **projeto NOVO na Vercel** (time Control Gestão, nome do cliente, ex.: `marilia-faria`), com **segredos próprios** e **prefixo Redis único** (ex.: `ak-mtf:`), mesmo dividindo a mesma conta Vercel e o mesmo database Upstash. Antes de escolher o prefixo, rode `SCAN` e confirme que ele não existe. Nunca reaproveite projeto, `.env` ou `.vercel/` de outro cliente. Dado de cliente misturado é incidente, não bug.
 
 ---
 
@@ -161,7 +201,7 @@ Todo o resto (`lib/*`, `api/*`, Central) é **motor compartilhado** — e por is
 | **`comum/CONTEXT-ENG.md`** | Ao mexer em prompt, custo, modelo ou escala | Números medidos (12/07/2026), limiares prompt × RAG, Haiku × Sonnet, anti-padrões, prompt caching, regra de ouro, os 12 blocos do `prompt.md` |
 | **`comum/ESCOLHA-LLM.md`** | Ao iniciar cliente, comparar provedor ou discutir cache | Gate de arquitetura, preços datados, adapters, cache por provedor e bake-off cego obrigatório |
 | **`comum/MIDIA-PROVEDORES.md`** | Antes de pedir Groq/ElevenLabs · ao decidir áudio, visão, PDF ou voz | OpenAI simples × STT econômico × voz premium, custos, contratos de adapter e E2E |
-| **`comum/EVALS.md`** | **ANTES de todo deploy de prompt** · ao ensinar qualidade | O exame do cérebro: conceito, quando rodar, como escrever cenário verificável, harness completo, o eval como **porteiro** da edição ao vivo, o que ele NÃO cobre, a prova de valor |
+| **`comum/EVALS.md`** | **ANTES de todo deploy de prompt** · ao ensinar qualidade | O exame do cérebro: conceito, quando rodar, como escrever cenário verificável, harness completo, o eval como **porteiro** da edição ao vivo, o que ele NÃO cobre, a prova de valor. **Inclui o cenário `Tom humano` (§5.1)** |
 | **`comum/PEGADINHAS.md`** | **ANTES de prometer voz ou teto de custo** · quando algo quebra | **39 cicatrizes verificadas em produção** que valem nos dois CRMs — numeração canônica **§1–§25 herdada das 25 originais** (outros arquivos referenciam por esse número: **nunca renumere**) + **§26+** novas. Temas: voz/áudio, rate limit **429**, janela 24h da Meta, **drift de IDs do CRM**, coexistência, Vercel/infra, modelo/credenciais, **budget de LLM**, followup, Central, ambiente e debug |
 | **`comum/PLAYGROUND.md`** | Ao montar/atualizar a Central | "Testar ao vivo": sandbox com tools em dry-run, estado por CRM, o que o sandbox **não** prova, checklist |
 | **`comum/OPERACAO-VISUAL.md`** | Workflow/Salesbot/Digital Pipeline não têm API de escrita completa | API primeiro, navegador autenticado, fronteira humana, travas e E2E |
@@ -180,11 +220,10 @@ Todo o resto (`lib/*`, `api/*`, Central) é **motor compartilhado** — e por is
 | **`CENTRAL.md`** ⭐ | **Ao criar OU evoluir a Central de IA de qualquer cliente** · quando decidir **onde um conhecimento mora** · quando alguém for "fazer diferente num cliente" | **O PADRÃO-MÃE da Central** (v4.1 Autônoma em camadas, 23/07/2026): 5 áreas, decisão zero-token, divulgação progressiva, Flight Recorder, Radar, Mapa Vivo, Shadow protegido, ledger, fail-closed, dark/light/mobile e propagação. Motor em `central-v2/`; cockpit em `central-v3/`; autonomia em `central-v4/` |
 | **`NOVO-CLIENTE.md`** ⭐ | **No início de TODO projeto novo e antes de copiar template** | Contrato Professor + Executor, rodadas de descoberta, autonomia, protocolo de bloqueio, máquina de estados, golden path e definição de pronto |
 | **`ONBOARDING.md`** ⭐ | **Depois da descoberta inicial e antes de construir** | Onboarding Compiler: uma entrada canônica gera diagnóstico, decisões, pendências, credenciais, prompt, CRM-map, evals e handoff; bloqueia dado inventado e projeto incompleto |
-| **`QUESTIONARIO-CLIENTE.md`** ⭐ | **Ao preparar os materiais e o formulário que o cliente preencherá** | Padrão canônico em três camadas: cinco documentos de negócio · decisões críticas da IA/resultado · descoberta técnica da Metrik. Define perguntas, experiência do cliente e gate de prontidão |
+| **`QUESTIONARIO-CLIENTE.md`** ⭐ | **Ao preparar os materiais e o formulário que o cliente preencherá** | Padrão canônico em três camadas: cinco documentos de negócio · decisões críticas da IA/resultado · descoberta técnica da Metrik. Define perguntas, experiência do cliente e gate de prontidão. **Inclui o pedido de 5–10 conversas reais boas — matéria-prima do few-shot de tom (§5.1)** |
 | **`RECUPERACAO.md`** ⭐ | Ao definir follow-up, instrumentar o agente ou montar a aba Recuperação | duas conversões (respondeu × concretizou), atribuição por toque/ciclo, fila, métricas, contrato do endpoint e definição de pronto |
 | **`FRONTEIRA.md`** | Ao decidir **o que construir a seguir** · quando alguém propuser uma feature nova | 47 propostas escaneadas em 8 frentes, julgadas por 3 lentes → **6 no pódio, 5 na 2ª onda, 7 no cemitério com o motivo** (pra ninguém reabrir). A ordem de compra que o júri bancou. Onde o agente está em relação ao estado da arte |
 | **`ESCOLA.md`** | Ao construir/evoluir a Central · quando o cliente pedir *"quero ajustar a IA sozinho"* · quando alguém propuser *"deixa ele editar o prompt"* | A aba **"Ensinar a IA"**: o cliente corrige, o sistema decide se vira prompt, exemplo, RAG ou ticket — **sem ele encostar no prompt**. Tela por tela com os textos reais, o pipeline do alfaiate, as 4 travas anti-quebra, o modelo de dados, o plano de 8,5 dias, os **riscos que ficam de pé (§8-B)** e a **FASE 0 JÁ CONSTRUÍDA (22/07/2026, GHL dogfood)** — código pronto e replicável em `assets/escola/`, 49/49 no teste de travas |
-| **`MIGRACAO-N8N.md`** | **Quando o cliente já tem IA em n8n** (ou outro bot) | Descobrir a IA antiga pela API, auditar os prompts antigos, gates disjuntos na rampagem, reaproveitar bot e campo, virada aprovada |
 | **`MONETIZACAO.md`** | Antes de renovar contrato · ao montar proposta · **antes de mostrar qualquer número de "lift" pro cliente** | 🚨 O **viés de seleção** que hoje infla a prova semanal, o holdout de 8 linhas que conserta, a escada de desfechos com o `n` de cada degrau, o baseline retroativo **que expira**, e por que atribuição de resultado — não qualidade — é o que mata contrato de IA |
 | **`ESCALA.md`** | Ao passar de ~10 clientes · ao pensar em produto vs. serviço | O que compõe a cada cliente novo e o que só soma, o fosso do portfólio, e o que quebra primeiro quando a carteira dobra |
 
@@ -200,12 +239,14 @@ Todo o resto (`lib/*`, `api/*`, Central) é **motor compartilhado** — e por is
 4. **Prova antes de promessa.** Voz, agendamento e followup só se vendem **depois de teste E2E em número real**. O caso da voz é o lembrete permanente: logava `voz: true`, status `delivered`, e **nada de áudio chegava no celular** — por dias.
 5. **Evals antes de deploy de prompt.** **10/10 ou não sobe.** Já pegou 2 defeitos e 1 regressão que matariam a venda em silêncio (Porta 3 caindo de 10 → 2 numa "melhoria" inocente). No cérebro editável, o eval é o **porteiro**: o botão Publicar nem destrava sem aprovação (prompt sabotado bloqueado com 5.7/10).
 
+> **As 5 leis não mudam de número — nunca renumere.** O filtro de tom humano (§5.1) **não é uma 6ª lei**: é um passo obrigatório *dentro* da lei 5, cobrado pelo cenário de eval `Tom humano`. Reprovou no tom, reprovou no exame, não sobe.
+
 ---
 
 ## §4 · COMO EU CONDUZO UMA SESSÃO
 
 **🆕 Cliente novo (do zero ao ar):**
-`NOVO-CLIENTE.md` → `comum/DIAGNOSTICO.md` (Bloco 0 primeiro: **qual CRM?**) → **Onboarding Compiler** (`ONBOARDING.md`, recompilar até `readyForBuild:true`) → desenho comentado ("vamos fazer X porque Y; o trade-off é Z") → `ghl/PLAYBOOK.md` **ou** `kommo/PLAYBOOK.md` → evals 10/10 → **E2E em número real** → Central **v4.1 canônica** → rampagem por tag → **ensinar o time a operar** (o que é o gate, como desligar a IA num lead com `atendimento-humano`, como ler a Central, como pedir ajuda). Tempo real com diagnóstico pronto: **~1 dia no GHL, ~meio dia no Kommo** (template pronto).
+`NOVO-CLIENTE.md` → `comum/DIAGNOSTICO.md` (Bloco 0 primeiro: **qual CRM?**) → **Onboarding Compiler** (`ONBOARDING.md`, recompilar até `readyForBuild:true`) → desenho comentado ("vamos fazer X porque Y; o trade-off é Z") → `ghl/PLAYBOOK.md` **ou** `kommo/PLAYBOOK.md` → **filtro de tom (§5.1)** → evals 10/10 → **E2E em número real** → Central **v4.1 canônica** → rampagem por tag → **ensinar o time a operar** (o que é o gate, como desligar a IA num lead com `atendimento-humano`, como ler a Central, como pedir ajuda). Tempo real com diagnóstico pronto: **~1 dia no GHL, ~meio dia no Kommo** (template pronto).
 
 **🔥 "Algo quebrou":**
 Primeiro **ISOLAR**, sempre: *saiu execução em `/api/executions`?*
@@ -215,7 +256,7 @@ Nunca comece pelo código: 8 em cada 10 "o agente parou" são gatilho, gate, jan
 
 **✏️ "Quero mudar o prompt":**
 **Primeiro: quem está pedindo?** Se for o **CLIENTE**, ele não edita — a correção entra pela aba **"Ensinar a IA"** (`POST /api/escola {acao:'capturar'}`), é triada por regex (dado volátil vira **ticket**, não prompt) e **espera o lote**; **você** lê a fila e escreve o delta (`ESCOLA.md` §8 Fase 0). Abrir o textarea pro cliente é exatamente a armadilha que `ESCOLA.md` §1 documenta. O fluxo abaixo é o da **AGÊNCIA**:
-Entender o **objetivo** (o que o cliente quer que mude no resultado, não na frase) → mudar → **testar no sandbox** (`/cerebro`, feel) → `node scripts/evals.mjs` → **10/10? deploy**. Reprovou? **o eval te ensina o que quebrou** — inclusive a regressão que você não imaginava. Sugestão do analista semanal passa pelo mesmo portão.
+Entender o **objetivo** (o que o cliente quer que mude no resultado, não na frase) → mudar → **passar o texto novo pelo §5.1 (skill `humanizer`)** → **testar no sandbox** (`/cerebro`, feel) → `node scripts/evals.mjs` → **10/10? deploy**. Reprovou? **o eval te ensina o que quebrou** — inclusive a regressão que você não imaginava. Sugestão do analista semanal passa pelo mesmo portão **e pelo mesmo filtro de tom** — o analista escreve como IA por padrão, e o texto dele entra direto no prompt se ninguém filtrar.
 
 **🎓 Mentorado aprendendo:**
 Comece pelo **mapa (§1)** → calibre o nível (`comum/DIAGNOSTICO.md` Bloco 5: já mexeu com API/webhook? sabe o que é variável de ambiente? já usou Vercel/Git?) → deixe ele **diagnosticar um cliente fictício** → só então código, com você revisando etapa por etapa e explicando o porquê. **Quem entende o organismo replica sozinho; quem decora comando trava no primeiro imprevisto.** Fecho de ciclo: o entregável dele é o **Códex do agente dele** (§7.5).
@@ -242,11 +283,60 @@ Perguntar o nome antes de responder o que ele perguntou = robô burocrático = c
 
 ---
 
+## §5.1 · TOM HUMANO — o prompt não pode cheirar a IA
+
+> **§5 resolve a ORDEM da resposta. §5.1 resolve o SOM dela.** Um agente pode acertar a ordem sagrada e ainda assim queimar a conversa porque escreve como chatbot. No WhatsApp brasileiro o lead percebe em duas mensagens — e "isso é robô" dito com desprezo é o oposto de "é um bot?" respondido com orgulho (§5).
+
+**A regra:** todo texto que o **lead** lê passa pelo filtro de tom **antes** do sandbox. Isso inclui `prompt.md` (persona, estilo, portas, exemplos), os **few-shots**, as **cadências de followup/recuperação**, os **templates de WhatsApp** e as mensagens da Escola/Central que o cliente lê.
+
+**Como eu rodo o filtro:** invoco a skill **`humanizer`** sobre o texto, em **modo arquivo** — ela reescreve só a prosa e não encosta em código, YAML, variáveis `{{...}}`, IDs nem link. Sem ela na sessão, o checklist abaixo vale sozinho: é o recorte dela que mais morde em português comercial.
+
+### Os 8 tells que mais matam no WhatsApp PT-BR
+
+| # | Tell | Como aparece no agente | O que fazer |
+|---|---|---|---|
+| 1 | **Travessão (—)** | "O curso — que começa em março — custa R$ 1.200" | **Proibir por regra literal no `prompt.md`**: *"nunca use travessão; use vírgula, ponto ou dois-pontos"*. É o tell nº 1 e o mais barato de matar |
+| 2 | **"não é X, é Y" / "não apenas… mas também"** | "Não é só um curso, é uma transformação" | Falar a coisa direto: "São 8 semanas com aula ao vivo e correção individual" |
+| 3 | **Tríade forçada** | "prático, rápido e eficiente" · "suporte, comunidade e material" | Dizer os itens que existem de verdade. Dois concretos vencem três genéricos |
+| 4 | **Fecho de uma linha que repete** | "É simples assim." · "Faz sentido?" em toda mensagem · "Simples e direto." | Cortar. A mensagem termina na última informação útil, ou na pergunta única de §5 |
+| 5 | **Negrito decorativo e emoji-rótulo** | "🚀 **Vantagem:** você aprende no seu ritmo" | Prosa normal. Negrito só em preço, data e nome da oferta |
+| 6 | **Abertura encenada** | "Ótima pergunta!" · "Deixa eu te explicar" · "Bora lá!" · "Perfeito!" em toda resposta | Começar pela resposta. §5 já manda responder primeiro; a abertura encenada empurra a resposta pra segunda linha |
+| 7 | **Vocabulário-marca de IA em PT-BR** | "solução robusta", "potencializar", "otimizar seus resultados", "no cenário atual", "de forma eficaz", "vale ressaltar", "é importante destacar", "aliado estratégico" | Trocar pelo verbo simples que o dono do negócio usaria num áudio |
+| 8 | **Resíduo de chatbot** | "Espero ter ajudado!" · "Fico à disposição" em toda resposta · "Posso ajudar com mais alguma coisa?" | Cortar. Vendedor humano não assina cada mensagem |
+
+### O que NÃO cortar (senão o agente vira seco)
+
+Tirar tell não é esterilizar. **Mantenha:** fala corrente ("tá", "pra", "dá uma olhada"); mensagem curta seguida de mensagem curta, do jeito que gente digita; opinião quando a marca tem opinião ("esse é o que mais dá resultado pra quem tá começando"); gíria do nicho; o número e o detalhe específico que só quem conhece o negócio sabe. Prosa limpa demais é outro sotaque de IA. **O alvo é soar como o melhor vendedor da casa num dia normal.**
+
+### Onde cada coisa mora (determinístico × tom)
+
+- **Determinístico vira REGRA DURA no prompt** (§5 já manda): proibição de travessão, teto de linhas por mensagem, uma pergunta por resposta, proibição de emoji-rótulo. O modelo escorrega no tom; a regra explícita segura.
+- **Tom vira EXEMPLO, não adjetivo.** "Seja natural e humano" não produz nada. **5 a 10 trechos de conversa real boa** do cliente, colados como few-shot, produzem. O `QUESTIONARIO-CLIENTE.md` já pede o tom da marca — peça junto os prints.
+- **Verificação vira EVAL.** Cenário novo **`Tom humano`** em `comum/EVALS.md`: o juiz reprova resposta com travessão, tríade genérica, fecho vazio, abertura encenada ou palavra da lista do tell 7. Conta pro 10/10 da lei 5.
+
+### A ordem de operação quando escrevo ou edito prompt
+
+```
+1. Escrever o CONTEÚDO    → §5 (fatos, preços, portas, ordem da resposta)
+2. Rodar o FILTRO         → skill humanizer + os 8 tells acima
+3. Conferir o que sobrou  → nenhum preço, número, nome, regra ou porta pode ter sumido
+                            (o filtro edita forma; fato que some é ERRO, não estilo)
+4. Sandbox /cerebro       → ler em voz alta: ainda soa a IA?
+5. node scripts/evals.mjs → 10/10 incluindo o cenário "Tom humano"
+6. Deploy
+```
+
+O passo 3 é o que impede o filtro de virar prejuízo: **o humanizer é bom em cortar encenação e péssimo em saber que R$ 1.200 importa.** Quem garante o fato sou eu.
+
+> **Status honesto:** esta doutrina entrou em 17/09/2026, a partir da skill `humanizer` (baseada em *Signs of AI writing*, da Wikipédia). Os 8 tells são observação de campo em conversa comercial PT-BR; **ainda não existe número medido de impacto em conversão**. A prova sai na primeira janela quinzenal com o cenário `Tom humano` ativo no eval — e quando sair, vira registro com data em `comum/CONTEXT-ENG.md`. Até lá, apresente como doutrina, **não como resultado provado** (§0 item 3, e `MONETIZACAO.md` sobre mostrar lift sem prova).
+
+---
+
 ## §6 · O QUE PEDIR AO CLIENTE (resumo — detalhe em `comum/DIAGNOSTICO.md`)
 
 **Acessos:** admin do CRM (GHL: pra gerar o PIT + criar workflows + templates · Kommo: token de integração + criar o Salesbot de envio) · **WhatsApp conectado e testado** (e a resposta honesta de *"esse número está em mais algum sistema?"*) · calendário com disponibilidade real (GHL).
 
-**Cérebro:** aplicar `QUESTIONARIO-CLIENTE.md`: cinco documentos de negócio + decisões da IA e resultado. A saída precisa conter tom da marca · catálogo com **preços** (ou política explícita de não informar) · FAQ real (10–15 perguntas) · objeções com racional · qualificação positiva e eliminatória · regras de escalação · CTA principal · portas (perfil → oferta → caminho) · follow-up/recuperação · cenários de eval · contrato de mensuração quando aplicável.
+**Cérebro:** aplicar `QUESTIONARIO-CLIENTE.md`: cinco documentos de negócio + decisões da IA e resultado. A saída precisa conter tom da marca · **5–10 trechos de conversa real boa (matéria-prima do few-shot de tom, §5.1)** · catálogo com **preços** (ou política explícita de não informar) · FAQ real (10–15 perguntas) · objeções com racional · qualificação positiva e eliminatória · regras de escalação · CTA principal · portas (perfil → oferta → caminho) · follow-up/recuperação · cenários de eval · contrato de mensuração quando aplicável.
 
 **Funil:** qual pipeline · até onde a IA vai · **"o que precisa acontecer na conversa pro lead virar Qualificado?"** (a pergunta mais valiosa do diagnóstico — a resposta vira instrução literal da IA) · quais dados o time precisa ver no card antes de falar com o lead · cadências de followup (quantos toques, em quanto tempo, quando desiste).
 
@@ -282,6 +372,7 @@ Toda sessão que descobrir algo novo **escreve aqui na hora**, no arquivo certo 
 | Widget oficial/público Kommo (manifest, CSS, página interna, OAuth, ZIP, moderação) | skill `kommo-widget-metrik`; cicatriz também em `kommo/PEGADINHAS.md` quando afetar a operação Kommo |
 | Decisão de arquitetura / trade-off novo | `comum/ARQUITETURA.md` |
 | Número medido, limiar, custo, regra de prompt | `comum/CONTEXT-ENG.md` |
+| **Tell de IA novo no texto que o lead lê (PT-BR) · impacto medido do filtro de tom** | **§5.1 aqui + o número em `comum/CONTEXT-ENG.md` + o cenário em `comum/EVALS.md`** |
 | Cenário de eval novo, falha do juiz | `comum/EVALS.md` |
 | Pergunta nova de discovery ou red flag | `comum/DIAGNOSTICO.md` |
 | **Padrão da Central / aba nova / onde um conhecimento mora** | **`CENTRAL.md`** |
@@ -289,7 +380,6 @@ Toda sessão que descobrir algo novo **escreve aqui na hora**, no arquivo certo 
 | Desenho da aba "Ensinar a IA" (o cliente corrigindo) | `ESCOLA.md` |
 | Prova de valor, holdout, precificação, renovação | `MONETIZACAO.md` |
 | O que quebra ao dobrar a carteira | `ESCALA.md` |
-| Migração de IA antiga (n8n, outro bot) | `MIGRACAO-N8N.md` |
 | Lei nova, postura, roteador | **este SKILL.md** |
 | **Código novo que outros clientes vão receber igual** | `assets/<feature>/` + o patch documentado no `INSTALAR.md` da pasta |
 
@@ -343,6 +433,8 @@ As 3 pernas distribuem **conhecimento**. Um **componente novo** do motor (ex.: o
 
 > **Um componente compartilhado só está "pronto" quando TODOS os clientes foram redeployados** (ou está anotado quem ficou pra trás). Componente que só vive no template é igual conhecimento que só vive no `.md`: não chegou em quem usa. *(1º caso: playground "Testar ao vivo" — no ar na Metrik 19/07. 2º caso: a **ESCOLA Fase 0** — código na Metrik 22/07, empacotado em `assets/escola/`; **nenhum cliente propagado ainda**.)*
 
+> **Doutrina também propaga.** O filtro de tom (§5.1) não é código: ele só chega no cliente quando o `prompt.md` dele **passa pelo filtro e sobe**. Vale a mesma regra do parágrafo acima — cliente antigo continua com o prompt com cara de IA até alguém rodar. Anote quem já passou.
+
 ### 7.4 · PROPAGAÇÃO PRAS SKILLS DERIVADAS (o critério rigoroso)
 
 Esta é a skill do **topo da escada**. Abaixo dela vivem as derivadas — a **do curso** (aluno constrói com CRM) e a **do webinar** (`agente-whatsapp`, uazapi puro, sem CRM). Elas não são cópias: são recortes. **Toda cicatriz nova passa por este teste, na hora em que é escrita:**
@@ -353,6 +445,8 @@ Esta é a skill do **topo da escada**. Abaixo dela vivem as derivadas — a **do
 | **Essa cicatriz vale pro WEBINAR?** (uazapi puro: conversa + mídia + followup, **sem CRM**) | Propaga **na hora** pra `agente-whatsapp` — só o que não depende de CRM (voz/ptt, Cloudflare 1010, `thinking: disabled`, VERCEL_URL, cron/QStash, janela 24h, eco/`wasSentByApi`, webhook único por instância) |
 | **É específica de CRM (GHL/Kommo)?** | Fica **só aqui**. Não polua a derivada com dor que o público dela nunca vai sentir |
 | **Expõe ID real, JID, token, URL interna ou nome de cliente?** | **Nunca sai daqui sem sanitizar** — placeholder na derivada e no plugin. **Método aprendido ao empacotar a Escola (22/07):** ① `grep` **sem `\b`** — em `'…\nBia:'` o `\n` literal mata o word-boundary e o nome do agente **passa batido**; ② varredura extra por `{NOME_AGENCIA}` / `{NOME_AGENTE}` nas **strings que o CLIENTE LÊ** (recado do 403, rodapé de ticket, placeholder de textarea) — é lá que o nome interno vaza, não no código |
+
+**§5.1 propaga pras DUAS derivadas sem ressalva.** Tom humano não depende de CRM e é o que mais separa o agente do aluno de um bot genérico. Na do curso, ensine o checklist dos 8 tells inteiro; na do webinar, os tells 1, 6 e 8 (travessão, abertura encenada, resíduo de chatbot) — são os que aparecem em praticamente todo prompt de quem está começando.
 
 **Regra:** propagação **atrasada é propagação perdida**. Se a cicatriz vale pra derivada, escreve nas duas na MESMA sessão — senão o aluno reencontra um bug que a casa já resolveu, e a promessa da escada quebra.
 
@@ -372,12 +466,14 @@ Cria `produtos/meu-agente/` com as 5 fichas no formato certo (compila de cara, u
 |---|---|
 | `organismo.ts` | os órgãos do `SKILL.md §1` + o fluxo do `comum/ARQUITETURA.md` (cada peça vira um `Orgao` com mecanismo e a dor de origem) |
 | `cicatrizes.ts` | os `PEGADINHAS.md` (comum + do CRM dele) → sintoma/causa/cura/anticorpo; `mente:true` se loga sucesso e não entrega |
-| `doutrina.ts` | as leis do `SKILL.md §3/§5` + os números do `comum/CONTEXT-ENG.md` + os evals do `comum/EVALS.md` |
+| `doutrina.ts` | as leis do `SKILL.md §3/§5/§5.1` + os números do `comum/CONTEXT-ENG.md` + os evals do `comum/EVALS.md` |
 | `evolucao.ts` | a história do agente dele (cada versão com a **dor** que a forçou — sem dor, não entra) |
 | `fronteira.ts` | o backlog/ideias dele (ou rode uma caça de ideias com juízes) |
 | `meta.ts` | nome, tagline, cor e `publicado: true` quando tiver conteúdo |
 
 **Não invento o conteúdo dele.** Extraio o que já está nos `.md` e **pergunto o que faltar** (a dor de um órgão, a evidência de uma cicatriz). Ficha com dado inventado é a mesma bomba-relógio do prompt inventado.
+
+**O texto do Códex também passa por §5.1.** É vitrine que cliente e aluno leem: página com travessão, tríade e "no cenário atual" desmente sozinha a competência que ela tenta provar.
 
 **3. Publicar:** `npm run deploy` → o Códex dele no ar, e no hub assim que `publicado: true`.
 
