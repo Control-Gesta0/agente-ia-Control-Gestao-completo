@@ -28,7 +28,7 @@
 A casa constrói um agente em **~1 dia no GHL e ~meio dia no Kommo** (`SKILL.md §4`). Isso é rápido. O gargalo **não é o build inicial** — é tudo que vem **depois do primeiro cliente**:
 
 > 🩸 **A admissão que abre o caso.** `FRONTEIRA.md`, linha 17: *"componente compartilhado só está pronto quando todo cliente no ar foi redeployado. **Multiplique por ~30min × clientes ativos + evals + E2E**."*
-> E `SKILL.md §7.3`, na mesma página em que a lei é escrita: *"(1º caso: playground 'Testar ao vivo' — no ar na Metrik 19/07; **propagar aos demais**)."*
+> E `SKILL.md §7.3`, na mesma página em que a lei é escrita: *"(1º caso: playground 'Testar ao vivo' — no ar na Control Gestão 19/07; **propagar aos demais**)."*
 >
 > **A lei existe, está escrita, e não está sendo cumprida.** Isso não é preguiça: é o custo estar alto demais para ser pago. **5 horas por melhoria × 10 clientes é o preço que faz a 4ª perna virar dívida.**
 
@@ -44,7 +44,7 @@ Enquanto a propagação for **linear e manual**, cada cliente novo **encarece to
 
 | Sintoma | Onde está escrito | O que ele prova |
 |---|---|---|
-| `cp -r clientes/metriksales/agente-ia clientes/<cliente>/agente-ia` | `ghl/PLAYBOOK.md` Etapa 1 🩸 | **Fork por cliente.** Cada cliente é uma cópia divergente do motor, não uma instância dele |
+| `cp -r clientes/controlgestao/agente-ia clientes/<cliente>/agente-ia` | `ghl/PLAYBOOK.md` Etapa 1 🩸 | **Fork por cliente.** Cada cliente é uma cópia divergente do motor, não uma instância dele |
 | `sed -i 's/agente:/agente-<slug>:/g' lib/*.ts api/*.ts` + *"reverta na mão o `agente: {` do `api/config.ts`"* | `ARQUITETURA.md` §6 🩸 | Configuração aplicada por **edição de código-fonte**. Um `sed` que já corrompeu um arquivo é a definição de processo que não escala |
 | *"Bump o `SISTEMA_VERSAO`… **é como você sabe qual cliente está atrasado**"* | `ARQUITETURA.md` §5.12 🩸 | A frota **só se reporta se um humano abrir a Central de cada cliente**. Inventário manual = inventário errado |
 | *"**Kommo = SÓ o playground.** Portar `prompt-store.ts` + `evals.ts` … é o próximo passo"* | `ARQUITETURA.md` §5.11 🩸 | **São dois motores, não um.** Toda propagação já é feita duas vezes, e uma das duas fica para trás |
@@ -98,22 +98,22 @@ Ordenadas por **horas devolvidas ÷ esforço**. As três primeiras são **um só
 A troca: o motor vira **pacote privado versionado por semver**, e o repositório do cliente vira **cinco arquivos**.
 
 ```
-@metrik/agente-core        → o organismo (buffer, loop Claude, tools, followup, guardião, analista, auditora)
-@metrik/adapter-ghl        → transporte, histórico via CRM, Calendars, hidratação de mídia
-@metrik/adapter-kommo      → transporte Salesbot/uazapi, histórico no Redis, enum_id, tags por merge
+@controlgestao/agente-core        → o organismo (buffer, loop Claude, tools, followup, guardião, analista, auditora)
+@controlgestao/adapter-ghl        → transporte, histórico via CRM, Calendars, hidratação de mídia
+@controlgestao/adapter-kommo      → transporte Salesbot/uazapi, histórico no Redis, enum_id, tags por merge
 ```
 
 ```jsonc
 // clientes/<slug>/agente-ia/package.json — o cliente inteiro, em 4 linhas
 "dependencies": {
-  "@metrik/agente-core": "1.4.0",
-  "@metrik/adapter-ghl": "1.4.0"
+  "@controlgestao/agente-core": "1.4.0",
+  "@controlgestao/adapter-ghl": "1.4.0"
 }
 ```
 
 ```ts
 // api/inbound.ts — no repo do cliente sobra ISTO (o Vercel exige o arquivo em api/)
-export { default, config } from '@metrik/agente-core/inbound'
+export { default, config } from '@controlgestao/agente-core/inbound'
 ```
 
 **Fica no cliente, e nunca no pacote:** `prompt.md` · `lib/crm-map.ts` · envs da Vercel · o **`status`** do `lib/manifest.ts`. É exatamente a fronteira que a `SKILL.md §7.3` já declara — a diferença é que agora ela é **imposta pelo empacotamento**, não pela disciplina de quem copia às 23h.
@@ -122,7 +122,7 @@ export { default, config } from '@metrik/agente-core/inbound'
 
 **Como propagar depois de L1:**
 ```bash
-npm i @metrik/agente-core@1.5.0 && npm run typecheck && node scripts/evals.mjs && vercel deploy --prod --yes
+npm i @controlgestao/agente-core@1.5.0 && npm run typecheck && node scripts/evals.mjs && vercel deploy --prod --yes
 ```
 De ~30 minutos de cópia atenta por cliente para **~3 minutos desatendidos** — e agora com `git diff` do que mudou, changelog e **rollback por número de versão**.
 
@@ -135,11 +135,11 @@ De ~30 minutos de cópia atenta por cliente para **~3 minutos desatendidos** —
 # 1. lista os arquivos que são MOTOR e os que são do CLIENTE
 node scripts/fronteira.mjs        # ~30 linhas: lê SKILL.md §7.3 e classifica lib/* api/*
 # 2. diffa TODO cliente contra o template — o resultado é o mapa da sua dívida
-for c in clientes/*/agente-ia; do diff -rq clientes/metriksales/agente-ia/lib "$c/lib"; done
+for c in clientes/*/agente-ia; do diff -rq clientes/controlgestao/agente-ia/lib "$c/lib"; done
 ```
 Se esse diff vier limpo nos arquivos de motor, o pacote é mecânico. Se vier sujo (e vai), **cada divergência é uma decisão que você tomou num cliente e esqueceu nos outros** — resolva antes de empacotar, senão você congela a bagunça dentro de uma versão.
 
-**Prova.** 📄 *Accelerate* / relatórios DORA: as práticas que mais separam times de alta performance são **automação de deploy, lotes pequenos e trunk-based** — todas impossíveis quando o artefato é uma cópia manual. 📄 *Team Topologies* (Skelton & Pais): o "platform team" existe para que times de fluxo consumam capacidade **por interface versionada**, não por cópia. 🩸 A prova doméstica é mais dura que as duas: `FRONTEIRA.md` L17 e o playground preso na Metrik desde 19/07.
+**Prova.** 📄 *Accelerate* / relatórios DORA: as práticas que mais separam times de alta performance são **automação de deploy, lotes pequenos e trunk-based** — todas impossíveis quando o artefato é uma cópia manual. 📄 *Team Topologies* (Skelton & Pais): o "platform team" existe para que times de fluxo consumam capacidade **por interface versionada**, não por cópia. 🩸 A prova doméstica é mais dura que as duas: `FRONTEIRA.md` L17 e o playground preso na Control Gestão desde 19/07.
 
 **Risco.** (a) O Vercel roteia **por arquivo** em `api/` — os shims de re-export têm que existir e ser testados no primeiro cliente antes de tocar nos outros. (b) A tentação de "só desta vez" editar `lib/` dentro de um cliente **destrói o modelo inteiro** — a regra vira: mexeu em `lib/` do cliente, é bug do pacote, sobe no pacote. (c) `prompt.md` e `crm-map.ts` **jamais** entram no pacote; um `postinstall` que os sobrescreva apaga a alma do cliente.
 
@@ -172,7 +172,7 @@ export default async function handler(req, res) {
 ```jsonc
 // frota.json — versionado. Segredos NÃO entram aqui (leia de .frota.secrets.json, fora do git)
 [
-  { "slug": "metriksales", "onda": 0, "crm": "ghl",   "url": "https://agente-ia-metriksales.vercel.app", "ativo": true },
+  { "slug": "controlgestao", "onda": 0, "crm": "ghl",   "url": "https://agente-ia-controlgestao.vercel.app", "ativo": true },
   { "slug": "<cliente-a>", "onda": 1, "crm": "ghl",   "url": "…", "ativo": true },
   { "slug": "<cliente-b>", "onda": 2, "crm": "kommo", "url": "…", "ativo": true }
 ]
@@ -201,7 +201,7 @@ console.table(linhas)
 
 **Por que é raro no Brasil.** Barreira de vocabulário. **Catálogo de serviço** (Backstage/Spotify), inventário de frota e "o artefato se reporta" são práticas de SRE que não circulam no mercado de agência daqui — a versão brasileira disso é uma planilha ou uma página no Notion, que **mente em duas semanas** exatamente como a documentação escrita à mão que o Códex já proíbe (`SKILL.md §7.2`: *"documentação que não é gerada da fonte vira mentira em duas semanas"*). **A doutrina do Códex aplicada à frota: o inventário tem que ser lido da fonte viva, nunca digitado.**
 
-**Primeiro passo (2h, hoje).** Escreva `api/version.ts` no template, deploy só na Metrik, crie `frota.json` com os 10 clientes e rode `node scripts/frota.mjs`. **A primeira tabela que sair é o retrato da sua dívida** — e é o único artefato deste arquivo que você pode ter em duas horas.
+**Primeiro passo (2h, hoje).** Escreva `api/version.ts` no template, deploy só na Control Gestão, crie `frota.json` com os 10 clientes e rode `node scripts/frota.mjs`. **A primeira tabela que sair é o retrato da sua dívida** — e é o único artefato deste arquivo que você pode ter em duas horas.
 
 **Prova.** 📄 Google SRE Book, cap. *Eliminating Toil*: define toil (manual, repetitivo, automatizável, sem valor duradouro, **cresce linearmente com o serviço**) e prescreve **teto de 50%**. Inventário manual de frota é o exemplo canônico. 📄 Backstage (Spotify → CNCF): o catálogo de software existe para responder *"o que está rodando, em qual versão, de quem é"* — a pergunta que hoje custa 5 minutos por cliente aqui. 🩸 `ARQUITETURA.md` §5.12 já admite a necessidade e propõe a solução manual.
 
@@ -215,7 +215,7 @@ console.table(linhas)
 
 | Onda | Quem | Por quê |
 |---|---|---|
-| **0** | Metrik (dogfood, tráfego real) | A casa é a primeira a sofrer o próprio bug. Já é a prática — só falta ser regra |
+| **0** | Control Gestão (dogfood, tráfego real) | A casa é a primeira a sofrer o próprio bug. Já é a prática — só falta ser regra |
 | **1** | 1–2 clientes tolerantes, de preferência um GHL e um Kommo | Cobre os dois adapters antes do resto |
 | **2** | O resto da carteira | Só depois do bake |
 
@@ -227,7 +227,7 @@ O script, por cliente da onda:
 
 ```
 1. registra o deployment atual em frota-rollback.json      ← o ponto de volta, ANTES de qualquer coisa
-2. npm i @metrik/agente-core@<v> && npm run typecheck
+2. npm i @controlgestao/agente-core@<v> && npm run typecheck
 3. node scripts/evals.mjs                                   ← 10/10 ou PULA este cliente e segue
 4. vercel deploy --prod --yes
 5. smoke: /api/version (core == <v>) · /api/validate (ok:true) · /api/inbound ({ok,redis:true})
@@ -433,7 +433,7 @@ E o `frota.mjs` (L2) passa a cruzar as duas colunas, imprimindo duas listas que 
 
 | Dia | O que fazer | Saída |
 |---|---|---|
-| 1 | `api/version.ts` no template + deploy na Metrik + `frota.json` com os 10 | **A primeira tabela da frota** |
+| 1 | `api/version.ts` no template + deploy na Control Gestão + `frota.json` com os 10 | **A primeira tabela da frota** |
 | 1 | `scripts/frota.mjs` (~60 linhas) rodando contra os 10 | O retrato da dívida: quem está em qual versão |
 | 2 | **Meça o seu toil**: ligue o time tracking do ClickUp (a skill `registro-clickup` já organiza por cliente) numa lista "Operação da Frota" | Substituir minhas estimativas do §1.3 por **medição** em 2 semanas |
 | 2 | **Meça o seu CFR**: `vercel ls --prod` + contagem de erro no `/api/executions` por cliente, 30 dias | O número que decide se L3 vale muito ou pouco **pra você** |
@@ -447,11 +447,11 @@ E o `frota.mjs` (L2) passa a cruzar as duas colunas, imprimindo duas listas que 
 | O que | Detalhe |
 |---|---|
 | Resolver as divergências achadas no dia 3 | **Antes** de empacotar. Empacotar bagunça congela bagunça |
-| Extrair `@metrik/agente-core` + `@metrik/adapter-ghl` | Git tag ou GitHub Packages privado. Semver de verdade |
-| Migrar **só a Metrik** (onda 0) para o pacote | Shims de re-export em `api/`, `npm run typecheck`, evals 10/10, E2E real |
+| Extrair `@controlgestao/agente-core` + `@controlgestao/adapter-ghl` | Git tag ou GitHub Packages privado. Semver de verdade |
+| Migrar **só a Control Gestão** (onda 0) para o pacote | Shims de re-export em `api/`, `npm run typecheck`, evals 10/10, E2E real |
 | **Testar o rollback de propósito**, em horário morto | Rollback não testado não existe |
 
-**Portão da semana 2:** a Metrik roda 100% do pacote e você voltou dela e foi de novo, com prova.
+**Portão da semana 2:** a Control Gestão roda 100% do pacote e você voltou dela e foi de novo, com prova.
 
 ### Semana 3 — PROPAGAR COM ONDA. ~6h
 

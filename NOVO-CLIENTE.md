@@ -1,7 +1,7 @@
 # NOVO CLIENTE — protocolo Professor + Executor
 
 > Este é o contrato operacional obrigatório para iniciar, construir e entregar
-> qualquer agente Metrik. Ele transforma a skill em condutora do projeto: ela
+> qualquer agente Control Gestão. Ele transforma a skill em condutora do projeto: ela
 > descobre, ensina, executa, barra erros conhecidos e só encerra com prova.
 
 ## 1 · A primeira conversa não é brainstorming solto

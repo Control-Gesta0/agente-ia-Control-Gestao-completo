@@ -136,7 +136,7 @@ No topo, sempre visível, a **barra de orçamento do cérebro**:
 O playground que já está no ar ganha **um botão embaixo de cada resposta da IA**:
 
 ```
-  🤖 Oi! O Método Metrik Sales é R$179 por mês e te dá [...]
+  🤖 Oi! O Método Control Gestão é R$179 por mês e te dá [...]
                                           [ 👍 ]  [ ✏️ errou aqui ]
 ```
 
@@ -223,7 +223,7 @@ Em qualquer das duas portas, cada turno da IA ganha o mesmo `[ ✏️ foi aqui ]
 O diário já existe (§1.3) e é a porta que produz evidência de melhor qualidade. O "colar" continua no produto porque cobre o que o diário não vê: conversa que aconteceu **antes** do agente entrar no ar, e print que o cliente recebeu de um vendedor humano.
 
 > 🩸 **CICATRIZ DA CONSTRUÇÃO (22/07/2026) — "quase de graça" era FALSO, e o erro é instrutivo.**
-> A primeira versão deste parágrafo dizia que a porta do diário sai **de graça porque o diário já existe**. Ao construir a Fase 0 no agente da Metrik, o `lib/execlog.ts` real guardava `{ts, contactId, nome, resultado, detalhe, duracaoMs, tools, voz}` — **e nenhum texto de mensagem.** O diário registrava *que* a IA respondeu, nunca *o que* ela respondeu.
+> A primeira versão deste parágrafo dizia que a porta do diário sai **de graça porque o diário já existe**. Ao construir a Fase 0 no agente da Control Gestão, o `lib/execlog.ts` real guardava `{ts, contactId, nome, resultado, detalhe, duracaoMs, tools, voz}` — **e nenhum texto de mensagem.** O diário registrava *que* a IA respondeu, nunca *o que* ela respondeu.
 >
 > O conserto foi barato (dois campos no `ExecRecord`, dois valores no `logExec` do `api/inbound.ts` — `target.body` e `reply.parts.join('\n')`, ambos já em escopo, mais a anonimização na gravação). **Mas a consequência de produto não é barata e precisa estar na tela:**
 >
@@ -384,7 +384,7 @@ O que ele digita nesses dois campos vai para `evidencia.situacao_cliente[]`, **n
 >
 > **Preço é dado vivo, não é conhecimento.** Se eu escrever R$229 dentro do cérebro dela, no dia em que você mudar de novo a IA vai continuar vendendo o preço antigo **com toda a confiança do mundo** — e ninguém vai perceber até um cliente reclamar.
 >
-> Preço vem do CRM. Virou o **chamado #12** pra Metrik, com prazo de resposta em 1 dia útil.
+> Preço vem do CRM. Virou o **chamado #12** pra Control Gestão, com prazo de resposta em 1 dia útil.
 > `[ ok, entendi ]`   `[ não é bem isso ]`
 
 ### 3.7 · Sub-aba "Caderno" — a lista viva
@@ -619,7 +619,7 @@ await publicarPrompt(candidato, { origem: 'caderno', itens: ids, nota: r.media }
 A versão anterior só suspendia e devolvia o cenário quebrado pro cliente olhar. Mas o portão é `n=10`, `K=1`, com juiz 0-10 — ele **reprova coisa certa com frequência conhecida** (§8, pré-requisitos). Suspender na primeira falha manda o cliente resolver um problema de calibração de eval, que é a última coisa que ele sabe fazer.
 
 - **Tentativa 1 falhou** → o resultado do eval **volta como feedback pro redator**, com o cenário que quebrou e a nota. Muitas falhas são o delta escrito largo demais; o redator estreita e passa.
-- **Tentativa 2 falhou** → **para.** Vira ticket pra Metrik, e o cliente lê em português: *"Testei duas vezes e não consegui fazer sua correção passar sem derrubar outra coisa. Não é você — é que essas duas regras estão brigando de um jeito que preciso olhar na mão. Chamado #14, respondo em 1 dia útil."*
+- **Tentativa 2 falhou** → **para.** Vira ticket pra Control Gestão, e o cliente lê em português: *"Testei duas vezes e não consegui fazer sua correção passar sem derrubar outra coisa. Não é você — é que essas duas regras estão brigando de um jeito que preciso olhar na mão. Chamado #14, respondo em 1 dia útil."*
 - **Teto rígido de 2.** Sem teto, um caso patológico entra em loop e queima Sonnet até alguém perceber na fatura.
 
 ⚠️ **Nunca deixe o retry "insistir até passar".** Retry sem teto contra um juiz ruidoso não converge pra qualidade — converge pra **texto que agrada aquele juiz**, que é overfitting no portão. Duas tentativas é o limite entre "tira o ruído do caminho" e "otimiza contra a régua".
@@ -697,7 +697,7 @@ interface ItemCaderno {
 
   origem: {
     tipo: 'correcao_cliente' | 'conversa_real' | 'analista' | 'fabrica' | 'engenheiro'
-    quem: string                // "Anderson (cliente)" | "analista semanal" | "Metrik"
+    quem: string                // "Anderson (cliente)" | "analista semanal" | "Control Gestão"
     quando: string              // ISO
     correcoes: string[]         // ids das correções que geraram — ≥3 pra escopo global
   }
@@ -990,7 +990,7 @@ E o `refina` é anti-inchaço puro: *"responde o preço antes de perguntar"* + *
 - [ ] 📐 **`CasoEval` já com `criterios[{id,texto,peso,bloqueante}]` + `rubrica_versao`** (§4.5) — o schema tem que nascer certo; migrar depois custa 10 clientes
 - [ ] `lib/manifest.ts`: módulo `escola` em `status: 'construção'` + bump do `SISTEMA_VERSAO`
 
-> ✅ **CONSTRUÍDA em 22/07/2026 no agente da Metrik (GHL, dogfood).** Não está em produção — está no código, com tipos limpos e teste passando. O que existe:
+> ✅ **CONSTRUÍDA em 22/07/2026 no agente da Control Gestão (GHL, dogfood).** Não está em produção — está no código, com tipos limpos e teste passando. O que existe:
 >
 > **O código virou ASSET replicável** — caminhos da 3ª coluna são relativos a `assets/escola/` (na raiz desta skill), e o passo a passo está no `INSTALAR.md` de lá.
 >
@@ -1064,7 +1064,7 @@ E o `refina` é anti-inchaço puro: *"responde o preço antes de perguntar"* + *
 | Fase 0 (MVP defensável) | **1–2 dias** *(+1h do perfil, +1 tarde dos chips, +2ª porta da Tela B)* |
 | Fases 1–3 | ~6,5 dias *(+replay, +retry, +4 ramos, +invariante)* |
 | **Build (GHL)** | **~8,5 dias** |
-| Observação em produção antes de confiar | **+1 semana** (só dogfood na Metrik) |
+| Observação em produção antes de confiar | **+1 semana** (só dogfood na Control Gestão) |
 | 🟧 Kommo | **+1 dia** de port antes de tudo |
 | 🔁 **4ª perna** (propagação) | ~30min × cliente ativo + evals + verificação no ar |
 

@@ -1,6 +1,6 @@
 # QUESTIONÁRIO CANÔNICO DO CLIENTE — conhecimento, operação da IA e resultado
 
-> Este é o padrão de entrada da Metrik. O formulário do ClickUp é a porta principal e deve exibir todas as perguntas críticas, agrupadas em blocos didáticos. Os cinco documentos aprofundam e organizam as respostas, mas nunca substituem perguntas visíveis no formulário.
+> Este é o padrão de entrada da Control Gestão. O formulário do ClickUp é a porta principal e deve exibir todas as perguntas críticas, agrupadas em blocos didáticos. Os cinco documentos aprofundam e organizam as respostas, mas nunca substituem perguntas visíveis no formulário.
 
 ## 1 · O desenho em três camadas
 
@@ -18,13 +18,13 @@ Qualidade vence quantidade. Documento em branco ou resposta “a confirmar” é
 
 ### Camada B — decisões da IA e do resultado
 
-O cliente responde e a Metrik valida em reunião:
+O cliente responde e a Control Gestão valida em reunião:
 
 #### Objetivo e alçada
 
 - Qual é o resultado final da conversa: agendar, vender no chat, solicitar documentos, visitar ou outro?
 - Quais caminhos diferentes existem por perfil, interesse ou produto?
-- Até onde a IA pode agir? O padrão Metrik termina em **Agendado**.
+- Até onde a IA pode agir? O padrão Control Gestão termina em **Agendado**.
 - Em quais situações a IA deve parar imediatamente e chamar uma pessoa?
 - Quem recebe cada tipo de handoff e em qual horário?
 - O que a IA nunca pode dizer, prometer, conceder ou interpretar?
@@ -67,7 +67,7 @@ O cliente responde e a Metrik valida em reunião:
 - Quais até cinco métricas de apoio serão acompanhadas?
 - Qual período representa o “Antes” — padrão: últimos 30 dias?
 - Onde cada número vive e quem confirma que está correto?
-- O que a Metrik controla e o que depende do cliente?
+- O que a Control Gestão controla e o que depende do cliente?
 - Como separar receita direta, assistida, estimada, protegida e economia operacional?
 - Qual meta inicial e em qual data será revisada?
 
@@ -95,9 +95,9 @@ Pedir um período explícito, padrão últimos 30 dias completos, e coletar: lea
 - Liste um pedido de suporte, uma tentativa de manipular a IA e um caso fora do escopo.
 - Quem aprova os cenários e quem assina o teste E2E no WhatsApp real?
 
-### Camada C — a Metrik descobre e registra
+### Camada C — a Control Gestão descobre e registra
 
-Não perguntar IDs técnicos ao cliente. Com os acessos, a Metrik descobre e valida:
+Não perguntar IDs técnicos ao cliente. Com os acessos, a Control Gestão descobre e valida:
 
 - CRM real e canal que o time usa;
 - pipelines, etapas, ordem, campos, opções/enums e responsáveis;
@@ -117,9 +117,9 @@ Uma mensagem, uma pasta e uma reunião:
 2. pasta contém os cinco documentos nomeados e numerados;
 3. formulário do ClickUp contém, de forma visível, os blocos completos de empresa, processo comercial, produtos, qualificação, objeções, operação da IA, follow-up, Foto do Antes, equipe/SLA, origens/UTM/base, ferramentas/automações, riscos e aprovação;
 4. reunião de 45–60 minutos resolve contradições e confirma pontos críticos;
-5. Metrik compila, audita o CRM e devolve o resumo para aprovação.
+5. Control Gestão compila, audita o CRM e devolve o resumo para aprovação.
 
-O formulário é a checklist do cliente e da Metrik: se a pergunta é necessária para implementar ou validar, ela precisa aparecer nele. **Uma pergunta deve pedir uma única resposta ou decisão.** É proibido colocar listas numeradas de subperguntas dentro da descrição de um campo.
+O formulário é a checklist do cliente e da Control Gestão: se a pergunta é necessária para implementar ou validar, ela precisa aparecer nele. **Uma pergunta deve pedir uma única resposta ou decisão.** É proibido colocar listas numeradas de subperguntas dentro da descrição de um campo.
 
 Use o tipo de campo mais simples para cada resposta:
 
@@ -134,7 +134,7 @@ Os títulos de seção são apenas blocos visuais — EMPRESA, PROCESSO, QUALIFI
 
 Os documentos continuam como material de apoio e aprofundamento. Um formulário resumido com cinco caixas genéricas ou um formulário com perguntas-pacote é inválido.
 
-O formulário canônico está em `FORMULARIO-ONBOARDING-METRIK.md` no workspace de Gestão de Projetos. Ele possui no máximo 20 perguntas, em linguagem simples. Os documentos de Perfil, Processo Comercial, Produtos, Qualificação e Objeções são fontes internas para orientar essas perguntas — nunca devem virar centenas de campos para o cliente. Nenhuma versão pode ser publicada com perguntas-pacote numeradas ou sem a Foto do Antes.
+O formulário canônico está em `FORMULARIO-ONBOARDING-CONTROL-GESTAO.md` no workspace de Gestão de Projetos. Ele possui no máximo 20 perguntas, em linguagem simples. Os documentos de Perfil, Processo Comercial, Produtos, Qualificação e Objeções são fontes internas para orientar essas perguntas — nunca devem virar centenas de campos para o cliente. Nenhuma versão pode ser publicada com perguntas-pacote numeradas ou sem a Foto do Antes.
 
 ## 3 · Gate de prontidão
 

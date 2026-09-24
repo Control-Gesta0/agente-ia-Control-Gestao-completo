@@ -5,7 +5,7 @@
 > oficial antes de prometer valor.
 >
 > **Estado honesto:** GPT-5.4 Mini venceu a final nativa offline e entrou no
-> dogfood da Metrik em produção em **24/07/2026**, com guardas determinísticas,
+> dogfood da Control Gestão em produção em **24/07/2026**, com guardas determinísticas,
 > evals 10/10 e rollback pela versão anterior da Vercel. Ainda precisa acumular
 > conversão real antes de virar padrão irrestrito de toda a frota.
 
@@ -16,15 +16,15 @@
 > mas omitiu tools obrigatórias de agenda, qualificação, origem e handoff;
 > por isso não entra na conversa principal. Pode ser reavaliado em tarefas
 > auxiliares sem efeito comercial irreversível. Evidência:
-> `clientes/metriksales/agente-ia/artifacts/model-openai-mini-veredito-2026-07-25.md`.
+> `clientes/controlgestao/agente-ia/artifacts/model-openai-mini-veredito-2026-07-25.md`.
 
-> **Bake-off Metrik de 24/07/2026:** 12 cenários × 3 repetições no OpenRouter.
+> **Bake-off Control Gestão de 24/07/2026:** 12 cenários × 3 repetições no OpenRouter.
 > Ranking corrigido: Sonnet 5 = 7,78 e zero falhas críticas; GPT-5.4 Mini = 7,50
 > e uma falha crítica; Kimi K2.5 = 7,50 e três; DeepSeek V4 Flash = 7,19 e três.
 > **Na eliminatória, Sonnet permaneceu produção; somente GPT-5.4 Mini avançou para final nativa.**
 > Kimi e DeepSeek ignoraram `preencher_qualificacao` em 3/3. O GPT duplicou prova
 > social em 3/3 e moveu `Agendado` antes da confirmação em 1/3. Evidência:
-> `clientes/metriksales/agente-ia/artifacts/model-bakeoff-veredito-2026-07-24.md`.
+> `clientes/controlgestao/agente-ia/artifacts/model-bakeoff-veredito-2026-07-24.md`.
 
 > **Final nativa de 24/07/2026:** 30 cenários × 3 repetições × 2 prompts, APIs
 > nativas e dois juízes cegos. No prompt atual, GPT-5.4 Mini = **7,22**, R$0,0100
@@ -33,7 +33,7 @@
 > muito menos tools. O hardening em bloco não resolveu: GPT 7,04/4 falhas,
 > Sonnet 6,56/2. Decisão: **GPT + guardas no código + canário de 10%**, Sonnet
 > como fallback. Evidência completa:
-> `clientes/metriksales/agente-ia/artifacts/model-final-native-veredito-2026-07-24.md`.
+> `clientes/controlgestao/agente-ia/artifacts/model-final-native-veredito-2026-07-24.md`.
 
 ## 1 · A pergunta certa não é “qual é a melhor LLM?”
 
@@ -189,7 +189,7 @@ Nunca faça “troquei a env e gostei da resposta”. O bake-off da casa:
 No dogfood:
 
 ```bash
-cd clientes/metriksales/agente-ia
+cd clientes/controlgestao/agente-ia
 BAKEOFF_REPEATS=3 npm run bakeoff:models
 ```
 
@@ -197,7 +197,7 @@ Harness: `scripts/model-bakeoff.mjs`. Pode usar uma única `OPENROUTER_API_KEY`
 para a eliminatória ou as chaves nativas `ANTHROPIC_API_KEY`, `OPENAI_API_KEY`,
 `MOONSHOT_API_KEY` e `DEEPSEEK_API_KEY`.
 
-No projeto Metrik, rode primeiro `npm run bakeoff:keys`: o terminal coleta as
+No projeto Control Gestão, rode primeiro `npm run bakeoff:keys`: o terminal coleta as
 chaves mascaradas e salva em `.env.bakeoff.local`, isolado da produção e ignorado
 pelo Git. **Nunca peça para o mestre colar chave no chat.** Sem uma chave, marque
 o modelo como **não testado**; nunca invente placar.

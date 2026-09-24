@@ -8,7 +8,7 @@
 
 ## §0 · O TERRENO — as 3 diferenças estruturais que GERAM todas as cicatrizes daqui
 
-A variante Kommo do agente serverless foi construída e deployada em **2026-07-11**, como **dogfood da própria Metrik**. Ela reusa ~80% da arquitetura do GHL (`comum/ARQUITETURA.md`), mas **três diferenças estruturais definem TUDO** — quase toda pegadinha desta página é consequência direta de uma delas:
+A variante Kommo do agente serverless foi construída e deployada em **2026-07-11**, como **dogfood da própria Control Gestão**. Ela reusa ~80% da arquitetura do GHL (`comum/ARQUITETURA.md`), mas **três diferenças estruturais definem TUDO** — quase toda pegadinha desta página é consequência direta de uma delas:
 
 | # | Diferença estrutural | Consequência prática |
 |---|---|---|
@@ -30,7 +30,7 @@ A variante Kommo do agente serverless foi construída e deployada em **2026-07-1
 | Ativo | Onde |
 |---|---|
 | **Template do agente Kommo** | `assets/agente-kommo/` (v2, dentro da skill) — **copiar esta pasta** · v1 com voz: skill do curso `agente-ia-crm/assets/kommo/` (§16) |
-| **Produção de referência (dogfood Metrik)** | https://agente-ia-kommo-metriksales.vercel.app · projeto Vercel `agente-ia-kommo-metriksales` |
+| **Produção de referência (dogfood Control Gestão)** | https://agente-ia-kommo-controlgestao.vercel.app · projeto Vercel `agente-ia-kommo-controlgestao` |
 
 **Processo de sessão nova:** invocar a skill + ler `assets/agente-kommo/INSTALAR.md` (e `MIGRACAO-N8N.md` se a conta já tem IA). Depois: discovery **AO VIVO** dos IDs antes do `crm-map` (a conta muda no mesmo dia), review adversarial antes de cliente real, E2E com lead próprio, rampagem por tag.
 
@@ -111,7 +111,7 @@ Não é global. Mensagem que entra pelo **webhook do Kommo** responde por **Sale
 - `message[add][0][text]` — não é JSON.
 - **Cura:** o parser precisa cobrir **formato PLANO E ANINHADO** (o template já cobre os dois).
 
-### 6. Payload confirmado em produção (Metrik) — use este, não o da doc
+### 6. Payload confirmado em produção (Control Gestão) — use este, não o da doc
 ```
 account[id]
 message[add][0][id]
@@ -236,13 +236,13 @@ Replicar o agente para um cliente Kommo leva **~meio dia** (7 passos). Detalhe o
 
 ---
 
-## §5 · DOGFOOD METRIK — os números que provam (estado 2026-07-11)
+## §5 · DOGFOOD CONTROL GESTÃO — os números que provam (estado 2026-07-11)
 
 > É a instalação de referência. Quando algo não bate no cliente novo, compare com estes valores.
 
 | Item | Valor |
 |---|---|
-| Deploy | https://agente-ia-kommo-metriksales.vercel.app |
+| Deploy | https://agente-ia-kommo-controlgestao.vercel.app |
 | Funil | **"Vendas Implementações" — id `12839352`** |
 | Alçada (etapas) | Primeiro contato `99017612` → Qualificação `99017620` → Agendamento de reunião `99017880` |
 | Campos | Resposta IA `1126115` · Demonstrou interesse `1117491` (**enums `815671`–`815685`**) · Follow-up `1122909` · Data da reunião `1085812` |
@@ -422,9 +422,9 @@ versão, callbacks, raízes CSS próprias ou divergência de SemVer. CSS nunca
 estiliza `html`, `body`, `:root`, `*` ou DOM nativo da Kommo. A matriz visual
 inclui sidebar estreita, página interna, estados de erro/vazio/cache e ausência
 de scroll horizontal. O playbook completo vive na skill
-`kommo-widget-metrik`.
+`kommo-widget-controlgestao`.
 
-**Evidência:** reproduzido e corrigido no Copilot Comercial by Metrik em conta
+**Evidência:** reproduzido e corrigido no Copilot Comercial by Control Gestão em conta
 técnica real em 30/07/2026. O card do lead passou a renderizar `Agora`,
 `Contexto` e `Conversa`, e as páginas nativas `Visão geral`, `Memória`,
 `Autoria` e `Configuração` foram validadas visualmente.
@@ -511,7 +511,7 @@ de entrada" e "conversa aberta") num funil de 44 status.
 
 ## §16 · O TEMPLATE "COPIE ESTA PASTA" NÃO EXISTIA NA MÁQUINA
 
-**Sintoma:** a skill manda copiar `clientes/metriksales/agente-ia-kommo/`; a
+**Sintoma:** a skill manda copiar `clientes/controlgestao/agente-ia-kommo/`; a
 pasta não existe na máquina nem no GitHub da organização, e a sessão fica entre
 travar o cliente ou reescrever o motor do zero (e reencontrar eco, mensagem
 duplicada e bot mudo).
@@ -527,7 +527,7 @@ curso (`agente-ia-crm/assets/kommo`) continua sendo a referência do Desenho B.
 Caminho fora da skill é "referência viva", nunca pré-requisito.
 
 **Evidência:** MTF Advocacia, 16/09/2026 — busca em todo o perfil do usuário e
-`gh repo list metrik-sales` sem a pasta; asset criado com `tsc` limpo e 32/32
+`gh repo list control-gestao` sem a pasta; asset criado com `tsc` limpo e 32/32
 no `npm test`.
 
 ## §17 · "CHAVE SECRETA" NÃO É TOKEN — 401

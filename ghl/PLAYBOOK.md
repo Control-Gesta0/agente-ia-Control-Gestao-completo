@@ -20,7 +20,7 @@ Esta é a perna **GHL** da skill. A origem é a antiga skill `agente-ia-ghl` (**
 | **Kommo** | `kommo/PLAYBOOK.md` + `kommo/PEGADINHAS.md` |
 | Qualquer um dos dois | `comum/DIAGNOSTICO.md` · `comum/ARQUITETURA.md` · `comum/CONTEXT-ENG.md` · `comum/EVALS.md` · `comum/PEGADINHAS.md` · `comum/PLAYGROUND.md` |
 
-**O template desta perna** é `clientes/metriksales/agente-ia/` (+ `clientes/metriksales/area-cliente/` pra Central). É este mesmo template que a perna Kommo chama de **"template irmão (GHL)"** quando manda portar monitores, evals e playground.
+**O template desta perna** é `clientes/controlgestao/agente-ia/` (+ `clientes/controlgestao/area-cliente/` pra Central). É este mesmo template que a perna Kommo chama de **"template irmão (GHL)"** quando manda portar monitores, evals e playground.
 
 ---
 
@@ -96,8 +96,8 @@ Lead manda "oi" no WhatsApp
 ## Etapa 1 · Copiar o template
 
 ```bash
-cp -r clientes/metriksales/agente-ia   clientes/<cliente>/agente-ia
-cp -r clientes/metriksales/area-cliente clientes/<cliente>/area-cliente
+cp -r clientes/controlgestao/agente-ia   clientes/<cliente>/agente-ia
+cp -r clientes/controlgestao/area-cliente clientes/<cliente>/area-cliente
 ```
 
 Se for **reusar o Upstash do 1º cliente** (free tier = 1 database só):
@@ -185,7 +185,7 @@ Monte a partir do material do diagnóstico, nesta ordem:
 11. **Limites** — o que **nunca** falar
 12. **Regra de suporte** — escalar **sem pitch**
 
-> Referência de estrutura: `clientes/metriksales/agente-ia/prompt.md` (**9,7/10 nos evals**).
+> Referência de estrutura: `clientes/controlgestao/agente-ia/prompt.md` (**9,7/10 nos evals**).
 > A regra de ouro e o porquê dela (custou venda, flagrada pelo eval) estão em `comum/CONTEXT-ENG.md`.
 
 ---
@@ -528,8 +528,8 @@ A página `/funil` renderiza `f.calendario.nome` / `janelaDias` direto. Agente s
 
 | Item | Valor |
 |---|---|
-| **Prova de produção** | **no ar na Metrik desde 19/07/2026** — componente em produção, não protótipo |
-| **Referência de implementação a copiar** | `clientes/metriksales/agente-ia` (+ `clientes/metriksales/area-cliente/app/cerebro/page.tsx`) |
+| **Prova de produção** | **no ar na Control Gestão desde 19/07/2026** — componente em produção, não protótipo |
+| **Referência de implementação a copiar** | `clientes/controlgestao/agente-ia` (+ `clientes/controlgestao/area-cliente/app/cerebro/page.tsx`) |
 | **A troca de assinatura no GHL** | **`buildSystemFromText(promptTexto)` no lugar de `buildSystem(contact)`**, mantendo o **MESMO bloco dinâmico** (data/hora + lead stub) — é isso que faz o chat rodar o prompt **candidato** (o texto do editor) em vez do vigente |
 | **Tools** | `simulateTool(name, input)` no lugar de `runTool(...)` — **dry-run**, zero efeito no CRM |
 | **Propagação** | é componente **COMPARTILHADO** → redeploye **agente + Central de cada cliente** (a "4ª perna" do `SKILL.md`) |

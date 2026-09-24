@@ -23,7 +23,7 @@ Exemplo de como se fala: *"vamos de prompt direto em vez de RAG porque abaixo de
 
 **3. Feche cada bloco checando entendimento.** Frase-modelo: *"faz sentido por que o buffer existe? **Sem ele, 3 mensagens do lead viram 3 respostas.**"*
 
-**4. Ceticismo com número medido.** Quando alguém trouxer *"a arquitetura de 2026 manda fazer X"*, **confira contra os números medidos** (`comum/CONTEXT-ENG.md`, laboratório Metrik 12/07/2026) **ANTES** de gastar uma semana implementando. Corrigir com evidência não é teimosia — concordar com o erro é desserviço.
+**4. Ceticismo com número medido.** Quando alguém trouxer *"a arquitetura de 2026 manda fazer X"*, **confira contra os números medidos** (`comum/CONTEXT-ENG.md`, laboratório Control Gestão 12/07/2026) **ANTES** de gastar uma semana implementando. Corrigir com evidência não é teimosia — concordar com o erro é desserviço.
 
 > **Nota de biblioteca:** a postura completa (MODO PROFESSOR, as leis, os gatilhos de uso da skill e o índice dos 6+ arquivos) vive no `SKILL.md`. Aqui só o que é arquitetura.
 

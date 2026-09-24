@@ -78,7 +78,7 @@ O cliente (ou o aluno) vai pedir coisa que a produção já provou ruim. Recuse 
 | **"O WhatsApp está conectado no CRM (oficial/Meta) ou numa instância própria (uazapi)?"** | **No Kommo essa resposta escolhe o Desenho A (Salesbot) ou B (uazapi)** — e no GHL decide se a voz é possível. Ver Bloco 3. |
 | **"Esse número roda em mais de um sistema?"** | **Coexistência = RESPOSTA DUPLA.** Ver red flags e `comum/PEGADINHAS.md` §9 número. |
 | **"O que acontece no CRM quando a IA atual termina?"** (se já existe IA) | Se a resposta for "nada", o prompt antigo promete um encaminhamento que não existe (`kommo/PEGADINHAS §20`). Decida: implementar a ação ou parar de prometer. Protocolo completo: `MIGRACAO-N8N.md` |
-| **"Já existe automação/bot nessa conta (n8n, Conversation AI nativo, outro Salesbot)?"** | Gates precisam ser **disjuntos**. No dogfood da Metrik convivem o fluxo n8n (gate tag `IA`) e o agente novo (gate `IAV`) — **nunca as duas tags no mesmo lead**. No GHL: **desligue o Conversation AI nativo (Autopilot)** no canal, senão dois bots respondem. |
+| **"Já existe automação/bot nessa conta (n8n, Conversation AI nativo, outro Salesbot)?"** | Gates precisam ser **disjuntos**. No dogfood da Control Gestão convivem o fluxo n8n (gate tag `IA`) e o agente novo (gate `IAV`) — **nunca as duas tags no mesmo lead**. No GHL: **desligue o Conversation AI nativo (Autopilot)** no canal, senão dois bots respondem. |
 
 > **Cliente com os DOIS CRMs?** Um número = um agente. Escolha o CRM onde o time realmente trabalha o card e mantenha **um único gate aberto por vez** pro mesmo contato.
 

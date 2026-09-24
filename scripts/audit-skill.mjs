@@ -163,8 +163,9 @@ await requireMarkers('assets/central-v4/central/components/MoneyRadar.tsx', [
 const codeFiles = (await walk('assets/central-v4/central'))
   .filter(path => /\.(ts|tsx|css)$/.test(path))
 const forbidden = [
-  [/\bmetriksales\b/i, 'metriksales'],
-  [/\bmetrik\b/i, 'Metrik'],
+  [/\bcontrolgestao\b/i, 'controlgestao'],
+  [/control[\s-]?gest[aã]o/i, 'Control Gestão'],
+  [/metrik/i, 'Metrik (marca antiga)'],
   [/\bbia\b/i, 'Bia'],
 ]
 
@@ -175,10 +176,10 @@ for (const path of codeFiles) {
   }
 }
 if (!failures.some(item => item.includes('identidade proibida'))) {
-  pass('assets v4.1 sem identidade Metrik/metriksales/Bia')
+  pass('assets v4.1 sem identidade Control Gestão/controlgestao/Metrik/Bia')
 }
 
-console.log(`\nAUDITORIA agente-ia-metrik-completo`)
+console.log(`\nAUDITORIA agente-ia-control-gestao-completo`)
 console.log(`✅ ${passes.length} verificações passaram`)
 
 if (failures.length) {

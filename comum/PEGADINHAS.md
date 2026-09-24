@@ -284,7 +284,7 @@ O painel do cliente atualizando sozinho consome o mesmo rate limit que atende o 
 ---
 
 ## 🏫 A ESCOLA — reler conversa, PII e proxy entre dois deploys
-*(Fase 0 da Escola no agente da Metrik/GHL, 22/07/2026 — 4 cicatrizes numa tarde; 3 delas pegas pelo TESTE, antes do ar)*
+*(Fase 0 da Escola no agente da Control Gestão/GHL, 22/07/2026 — 4 cicatrizes numa tarde; 3 delas pegas pelo TESTE, antes do ar)*
 
 ### §33 🚨 O diário registra que RESPONDEU, não O QUE respondeu 🟪
 - **Sintoma:** a Escola (e replay, e análise de qualidade) precisa **reler a conversa** — e não há texto nenhum pra reler.
@@ -292,7 +292,7 @@ O painel do cliente atualizando sozinho consome o mesmo rate limit que atende o 
 - **Conserto:** dois campos **opcionais** no `ExecRecord` (`turnoLead`, `respostaIA`) + preenchê-los no `logExec` do `api/inbound.ts` — `target.body` e `reply.parts.join(...)` **já estão em escopo** (é uma linha, não refactor) — e **anonimizar na GRAVAÇÃO** (§35), nunca só na exibição.
 - ⚠️ **Consequência que NÃO se conserta:** o histórico anterior **não tem texto e nunca terá**. A lista **nasce vazia** e só enche a partir do deploy. Avise o cliente — senão a primeira impressão da feature nova é *"está quebrada"*.
 - **ANTICORPO:** antes de chamar um componente existente de **"de graça"**, **abra o arquivo e confira o SCHEMA**. *"X já existe"* **não é** *"X já guarda o que eu preciso"*. Vale pro diário, pro histórico, pro tracker e pra qualquer peça que você planeja reaproveitar numa feature nova.
-- **Evidência:** Metrik/GHL **22/07/2026** — descoberto ao construir a Fase 0 da Escola: o `execlog` tinha 500 registros e **zero texto**.
+- **Evidência:** Control Gestão/GHL **22/07/2026** — descoberto ao construir a Fase 0 da Escola: o `execlog` tinha 500 registros e **zero texto**.
 
 ### §34 Trava de perfil que MATA a própria feature 🟪
 - **Sintoma:** o cliente abre a Central e o **"testar ao vivo" sumiu** — ou existe, mas o campo de texto **nunca responde**. Sem erro, sem log: a feature **morre em silêncio**.
@@ -300,7 +300,7 @@ O painel do cliente atualizando sozinho consome o mesmo rate limit que atende o 
 - **Causa (server):** a lista de ações bloqueadas pra não-admin. O reflexo natural é escrever `['publicar','restaurar','rollback','testar','chat']` — e o `'chat'` **desliga o laboratório do cliente**. O certo é `['publicar','restaurar','rollback','testar']`: **`'chat'` fica de FORA de propósito**.
 - **Conserto:** **3 modos** — `ler | ensinar | editar` — com o playground **extraído** pra `components/Playground.tsx` e prop `onErrouAqui` opcional (é por ela que o "errou aqui" da Escola pega o turno).
 - **ANTICORPO:** ao esconder algo por perfil, pergunte **o que mais estava aninhado ali dentro**. Permissão é **por AÇÃO**, não por bloco de JSX.
-- **Evidência:** Metrik/GHL **22/07/2026** — pego na leitura do `page.tsx` **antes** de aplicar a trava; teria desligado a feature no primeiro cliente com perfil `dono`.
+- **Evidência:** Control Gestão/GHL **22/07/2026** — pego na leitura do `page.tsx` **antes** de aplicar a trava; teria desligado a feature no primeiro cliente com perfil `dono`.
 
 ### §35 🚨 Celular BR tem 11 dígitos — EXATAMENTE como CPF (regex de PII) 🟪
 Dois bugs numa regex que "já estava pronta":
@@ -322,14 +322,14 @@ Dois bugs numa regex que "já estava pronta":
 - **O teste guarda OS DOIS LADOS:** que o PII **suma** *e* que **o que ensina fique**. `R$179`, `"12x"`, `"desde 2019"` passam **intactos** — anonimizador que come o preço **destrói a evidência** que a Escola precisa pra corrigir a IA.
 - **Corolário que mudou a arquitetura: o que precisa de PROVA não pode depender de CREDENCIAL.** O `CONFIG` faz `required('GHL_TOKEN')` **no topo do módulo** → qualquer import na cadeia exige credencial de CRM e torna **impossível** testar a anonimização. Foi o teste que forçou o split **`escola-core.ts` (puro) × `escola.ts` (com CONFIG/Redis)** — e o split ainda matou um **ciclo de import** (`execlog → escola → config`, com `escola` precisando de `execlog`).
 - **ANTICORPO:** **regex de PII sem teste é vazamento com data marcada.** E a ordem dos padrões só muda com **`npx tsx scripts/test-escola.ts` verde**.
-- **Evidência:** Metrik/GHL 22/07/2026 — os dois bugs pegos **pelo teste, ANTES do ar**.
+- **Evidência:** Control Gestão/GHL 22/07/2026 — os dois bugs pegos **pelo teste, ANTES do ar**.
 
 ### §36 Proxy que espera JSON e recebe HTML 🟪
 - **Sintoma:** `Unexpected token '<' ... is not valid JSON` na Central — erro que **não diz nada** e manda você caçar bug no lugar errado.
 - **Causa:** a Central (Next) faz **proxy server-side** pro agente. Quando a Central sobe **antes** de o agente ter o endpoint, a Vercel devolve **o HTML do 404** e o `.json()` estoura.
 - **Conserto:** leia **`.text()`** e tente `JSON.parse`; no `catch`, devolva **503 com mensagem em português** dizendo que **falta deploy do agente** (não "erro interno").
 - **ANTICORPO:** **todo proxy entre dois deploys independentes** precisa tratar resposta não-JSON — **a ordem de deploy não é garantida** (e no dia do go-live ela é justamente a errada).
-- **Evidência:** Metrik/GHL **22/07/2026** — reproduzido no dev server: Central no ar, agente sem o endpoint → `Unexpected token 'T'` (era o `The page could not be found` da Vercel).
+- **Evidência:** Control Gestão/GHL **22/07/2026** — reproduzido no dev server: Central no ar, agente sem o endpoint → `Unexpected token 'T'` (era o `The page could not be found` da Vercel).
 
 ---
 
@@ -438,7 +438,7 @@ json_object` devolve 400 se nenhuma mensagem contém literalmente a palavra
 `JSON`. O helper de JSON acrescenta essa instrução sozinho; não dependa de cada
 chamador lembrar.
 
-**Evidência:** Metrik, 24/07/2026 — guard recusou a chamada antes de qualquer GET
+**Evidência:** Control Gestão, 24/07/2026 — guard recusou a chamada antes de qualquer GET
 ao CRM; eval server-side GPT aprovado 10/10, média 9,7; produção publicada.
 
 ---

@@ -52,7 +52,7 @@ export const CRM_MAP = {
       sinais: /$^/,
       roteiro: [],
       obrigatorios: [],
-      mensagemSemAgente: 'Obrigado! A equipe do escritório vai continuar seu atendimento por aqui.',
+      mensagemSemAgente: 'Anotei aqui. Alguém da equipe do escritório continua a conversa com você por aqui.',
     },
   ] as Porta[],
 
@@ -63,9 +63,9 @@ export const CRM_MAP = {
     portaPadraoOutros: 'geral',
     /** true = texto com sinal inequívoco de UMA porta trava direto, sem mostrar menu */
     classificarTextoLivre: true,
-    texto: 'Olá! Selecione o assunto:\n\n1 - [ASSUNTO 1]\n9 - Outros assuntos',
-    pedirResumo: 'Certo! Me conta em 1 ou 2 frases o que aconteceu?',
-    naoEntendi: 'Não consegui entender sua escolha. Pode responder só com o número da opção?',
+    texto: 'Oi! Sobre qual assunto você quer falar? Me responde com o número:\n\n1 - [ASSUNTO 1]\n9 - Outros assuntos',
+    pedirResumo: 'Certo. Me conta em uma ou duas frases o que aconteceu.',
+    naoEntendi: 'Não entendi qual opção você escolheu. Pode mandar só o número?',
   },
 
   finalizar: {
@@ -85,8 +85,8 @@ export const CRM_MAP = {
   /** status onde o lead está ADIANTADO — a IA não mexe (kommo/PEGADINHAS §14) */
   etapasProtegidas: [142, 143] as number[],
 
-  textoSeguro: 'Entendi. Quem avalia isso com cuidado é a nossa equipe. Posso seguir com mais uma pergunta rápida?',
-  textoSeguroFinal: 'Obrigado pelas informações! A equipe vai dar continuidade ao seu atendimento por aqui.',
+  textoSeguro: 'Entendi. Isso quem avalia é a nossa equipe. Posso te fazer mais uma pergunta rápida?',
+  textoSeguroFinal: 'Obrigado, anotei tudo. Agora a equipe segue com você por aqui.',
 
   midia: {
     instrucaoVisao: 'Descreva em português, em no máximo 4 frases, o conteúdo do arquivo que um lead enviou pelo WhatsApp: tipo de documento, quem emitiu, datas e valores legíveis. Não avalie direitos. O que não estiver legível, diga "ilegível".',

@@ -84,7 +84,7 @@ export function blocoDosChips(chips: ChipId[]): BlocoId | 'triagem' {
  *   CONHECIMENTO  fato / política / documento EXTENSO     → RAG (§5)
  *   MIDIA         foto / PDF / vídeo que a IA envia        → biblioteca de mídia (§7)
  *   TOOL_CRM      dado que muda toda hora (agenda/status)  → tool, nunca texto
- *   TICKET        precisa de gente / nada dos acima        → chamado pra Metrik
+ *   TICKET        precisa de gente / nada dos acima        → chamado pra Control Gestão
  *
  * CADERNO e TOOL_CRM já existiam (Escola Fase 0). Os outros 4 nascem com a régua.
  * 🩸 'CADERNO' guarda o nome antigo de propósito: há correções gravadas no Redis

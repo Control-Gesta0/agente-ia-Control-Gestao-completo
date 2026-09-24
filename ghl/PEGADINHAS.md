@@ -271,8 +271,8 @@ curl "https://services.leadconnectorhq.com/calendars/?locationId=<LOC>" \
 
 ## §GHL-15 · PLAYGROUND "TESTAR AO VIVO" — a troca que o GHL exige
 
-- **Prova de produção:** componente **no ar na Metrik desde 19/07/2026** — não é protótipo.
-- **Referência de implementação a copiar:** `clientes/metriksales/agente-ia` (+ `clientes/metriksales/area-cliente/app/cerebro/page.tsx`).
+- **Prova de produção:** componente **no ar na Control Gestão desde 19/07/2026** — não é protótipo.
+- **Referência de implementação a copiar:** `clientes/controlgestao/agente-ia` (+ `clientes/controlgestao/area-cliente/app/cerebro/page.tsx`).
 - **A troca específica do agente GHL:** use **`buildSystemFromText(promptTexto)`** no lugar de **`buildSystem(contact)`** — mantendo **o MESMO bloco dinâmico** (data/hora + lead stub). É o que faz o chat rodar o prompt **candidato** (o texto do editor) em vez do vigente.
 - Tools em **dry-run** (`simulateTool`) → **ZERO efeito no CRM**. Doutrina e demais detalhes do componente em `comum/PLAYGROUND.md`.
 
@@ -332,7 +332,7 @@ Mapa de-para com a numeração da antiga skill `agente-ia-ghl` (**aposentada em 
 - **Causa:** o GHL pode ter um circuito paralelo. Um workflow amplo como `Contact Created → Add Tag` alimenta outros workflows, e um fluxo legado do Conversation AI pode conter `Criar ou atualizar a oportunidade`. Esse escritor opera independentemente do agente externo. A variação `+55 DDD 9XXXXXXXX` × `+55 DDD XXXXXXXX` também impede deduplicação ingênua por igualdade literal.
 - **Cura:** centralize a criação no agente externo com a regra **reutiliza 1 · cria quando 0 · bloqueia quando 2+**. Todo lead atendido deve sair da execução com card. A classificação Educação × Empresarial considera oferta, mensagem, campanha, UTMs e tags; não reduza Educação a “curso” nem Empresarial a “empresa”. Se ainda estiver ambíguo, crie uma rota explicitamente provisória e refine após uma pergunta-chave, permitindo troca de pipeline apenas enquanto o card continuar na entrada. Ao criar ou reutilizar, espelhe deterministicamente todas as UTMs disponíveis do contato/attribution na opportunity. O POST não repete automaticamente em 5xx: releia o CRM antes de concluir que falhou. No GHL, remova toda ação nativa concorrente. Para contato, normalize para E.164 e trate o nono dígito como busca de alias, nunca como alteração cega.
 - **Anticorpo:** execute duas vezes o mesmo evento e prove: um contato canônico e exatamente uma oportunidade aberta no funil escolhido; a segunda execução precisa reutilizar o mesmo ID. O `/api/validate` confere os dois pipelines e as etapas esperadas por nome.
-- **Evidência (28/07/2026):** na conta Metrik, o workflow `Adiciona Tag - Bia` estava publicado com `Contact Created → Add Tag`; também havia um workflow legado `Agende de qualificação e agendamento` com a ação `Criar ou atualizar a oportunidade` no funil antigo `[05] Vendas - Serviços`, removida e publicada. O agente passou a garantir a oportunidade nos funis `01 · Comercial — Educação` e `02 · Comercial — Empresarial` pela regra 1/0/2+, com classificação explícita da intenção.
+- **Evidência (28/07/2026):** na conta Control Gestão, o workflow `Adiciona Tag - Bia` estava publicado com `Contact Created → Add Tag`; também havia um workflow legado `Agende de qualificação e agendamento` com a ação `Criar ou atualizar a oportunidade` no funil antigo `[05] Vendas - Serviços`, removida e publicada. O agente passou a garantir a oportunidade nos funis `01 · Comercial — Educação` e `02 · Comercial — Empresarial` pela regra 1/0/2+, com classificação explícita da intenção.
 
 ☐ Todo lead atendido termina com opportunity; só a rota idempotente `garantir_oportunidade` cria
 ☐ Todas as UTMs disponíveis foram espelhadas na opportunity na criação/reutilização

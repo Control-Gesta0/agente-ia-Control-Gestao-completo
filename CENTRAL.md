@@ -19,7 +19,7 @@ mora** (a régua do §2) · for propagar uma melhoria pra frota.
 > **cockpit canônico de 5 áreas + ledger de custos**. `assets/central-v4/`
 > adiciona a **Central Autônoma em camadas (v4.1)**: Briefing, comando, Flight Recorder, Radar,
 > Mapa Vivo, Shadow protegido, simulador e Recibo de Valor. A base foi construída no
-> dogfood da Metrik em 23/07/2026: typecheck limpo, **74 asserções**, build,
+> dogfood da Control Gestão em 23/07/2026: typecheck limpo, **74 asserções**, build,
 > dark/light, desktop/mobile, deploy e smoke HTTP em produção. O Shadow foi
 > provado com um caso real: R$0,1056 dentro da reserva de R$0,20, 4/4 sinais,
 > tools simuladas e nenhuma publicação. O endpoint financeiro está provado; a
@@ -32,7 +32,7 @@ mora** (a régua do §2) · for propagar uma melhoria pra frota.
 **Legenda de origem** (de onde cada peça do padrão veio):
 | Selo | Significado |
 |---|---|
-| 🏠 | **Nosso** — construído e provado na casa (Metrik) |
+| 🏠 | **Nosso** — construído e provado na casa (Control Gestão) |
 | 🔷 | **Continuare** — o padrão de produto que o sócio evoluiu e a casa adotou (análise 22/07/2026) |
 | ✨ | **Novo** — nasce neste padrão; nem nós nem eles tínhamos |
 | 🩸 | cicatriz — a razão nasceu de uma dor real, com data |
@@ -189,7 +189,7 @@ São **seis destinos**. A régua decide em ordem — **para no primeiro que casa
 │     → MÍDIA. (§7)
 │
 └─ 6. Não é nada disso, ou precisa de gente?
-      → TICKET.  Vira chamado pra Metrik.
+      → TICKET.  Vira chamado pra Control Gestão.
 ```
 
 **Os limiares NÃO são chute — são medidos** (`comum/CONTEXT-ENG.md`, 12/07/2026):
@@ -388,7 +388,7 @@ que o mestre citou ("uns têm, outros não") como sintoma da falta de padrão. A
 
 > 🩸 A lição que virou padrão: cor cravada no componente (`bg-white/[0.03]`, `#0a0a0a`, `text-white`)
 > vira texto invisível ou caixa preta no tema oposto. **Cor sempre em token; hover sempre em
-> `hover-raise`; superfície sempre em `.surface`.** Detalhe em `reference_design_system_metrik`.
+> `hover-raise`; superfície sempre em `.surface`.** Detalhe em `reference_design_system_controlgestao`.
 
 > 🩸 **E a segunda lição, medida em produção (22/07/2026): alpha não funciona no tema CLARO.**
 > `rgba(15,23,42,0.035)` sobre fundo branco é **invisível** — o campo some e o cliente vê uma tela
@@ -535,7 +535,7 @@ trava deles é confirmação humana). Conteúdo da clínica **não** foi copiado
 | O eval como porteiro | `comum/EVALS.md` |
 | O organismo e a Central atual | `SKILL.md` §1 · `comum/ARQUITETURA.md` |
 | Versionamento e propagação (a 4ª perna) | `SKILL.md` §7.3 · `ESCALA.md` |
-| Design system e tema | `reference_design_system_metrik` |
+| Design system e tema | `reference_design_system_controlgestao` |
 
 ---
 

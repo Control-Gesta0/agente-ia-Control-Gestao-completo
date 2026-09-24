@@ -17,10 +17,26 @@ export function checkReply(text: string, regras = REGRAS_CLIENTE): Violation[] {
   if (corrupt) out.push({ regra: 'texto corrompido', trecho: corrupt[0] })
   const json = text.match(/^\s*[\[{]|"(campo|evidencia|respostas|motivo|resumo|valor)"\s*:/)
   if (json) out.push({ regra: 'texto corrompido', trecho: json[0] })
+  const travessao = text.match(/[—–]/)
+  if (travessao) out.push({ regra: 'travessão', trecho: travessao[0] })
   const perguntas = (text.match(/\?/g) || []).length
   if (perguntas > 1) out.push({ regra: 'mais de uma pergunta', trecho: `${perguntas} interrogações` })
   if (!text.trim()) out.push({ regra: 'vazio', trecho: '' })
   return out
+}
+
+/**
+ * Travessão é o tell nº 1 de texto de IA (SKILL §5.1, humanizer §8). Troca em
+ * código, sem gastar outra chamada: faixa numérica vira "a", aposto vira vírgula.
+ */
+export function semTravessao(text: string): string {
+  if (!/[—–]/.test(text)) return text
+  return text
+    .replace(/(\d)\s*[—–]\s*(\d)/g, '$1 a $2')
+    .replace(/^[ \t]*[—–][ \t]*/gm, '')
+    .replace(/[ \t]*[—–][ \t]*/g, ', ')
+    .replace(/,\s*([,.!?:;])/g, '$1')
+    .replace(/, (\n|$)/g, '$1')
 }
 
 export function norm(s: string): string {

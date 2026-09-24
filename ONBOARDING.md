@@ -46,7 +46,7 @@ Blocos:
 
 Antes de montar o JSON, aplique `QUESTIONARIO-CLIENTE.md`. A entrada humana não é uma caixa única de briefing: combina os cinco documentos de negócio (Perfil, Processo Comercial, Produtos e Serviços, Qualificação e Objeções), o documento/formulário **Decisões da IA e Resultado** e a reunião de validação. O Compiler recebe a síntese confirmada desse pacote e preserva cada documento como fonte.
 
-Não repetir perguntas bem respondidas: os documentos guardam profundidade; o formulário fecha decisões críticas; a Metrik descobre a parte técnica no CRM/API.
+Não repetir perguntas bem respondidas: os documentos guardam profundidade; o formulário fecha decisões críticas; a Control Gestão descobre a parte técnica no CRM/API.
 
 ## 4 · Saídas
 

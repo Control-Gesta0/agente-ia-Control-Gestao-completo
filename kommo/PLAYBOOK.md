@@ -2,7 +2,7 @@
 
 > Execute na ordem. Cada etapa tem o **porquê** (pra você ensinar, não só clicar).
 > Tempo real com diagnóstico pronto: **~meio dia** (7 passos). O agente Kommo reusa **~80% da arquitetura do GHL** — o que muda está inteiro aqui.
-> **Validado em produção:** dogfood Metrik desde **2026-07-11** (Desenho A/Salesbot), Desenho B (uazapi + voz) E2E em **2026-07-12**, playground do cérebro no ar em **19/07/2026**.
+> **Validado em produção:** dogfood Control Gestão desde **2026-07-11** (Desenho A/Salesbot), Desenho B (uazapi + voz) E2E em **2026-07-12**, playground do cérebro no ar em **19/07/2026**.
 
 ## Pré-requisito
 
@@ -100,10 +100,10 @@ uazapi webhook (in / out / fromMe → histórico COMPLETO, os 2 lados)
 | Ativo | Onde |
 |---|---|
 | **Template do agente (Kommo) v2 — dentro da skill** | `assets/agente-kommo/` — Desenho A, OpenAI, portas com roteador em código, travas, evals, discover. **Copiar esta pasta** e seguir `assets/agente-kommo/INSTALAR.md` (status honesto lá) |
-| Template v1 (Claude, Desenho A+B, voz) | skill do curso `agente-ia-crm/assets/kommo/` · dogfood `clientes/metriksales/agente-ia-kommo/` (pode não existir na máquina — `PEGADINHAS §16`) |
+| Template v1 (Claude, Desenho A+B, voz) | skill do curso `agente-ia-crm/assets/kommo/` · dogfood `clientes/controlgestao/agente-ia-kommo/` (pode não existir na máquina — `PEGADINHAS §16`) |
 | **Cliente já tem IA em n8n** | `../MIGRACAO-N8N.md` antes de qualquer passo |
-| **Produção de referência (dogfood Metrik)** | https://agente-ia-kommo-metriksales.vercel.app · projeto Vercel `agente-ia-kommo-metriksales` |
-| **Template GHL (irmão)** | `clientes/metriksales/agente-ia/` + `ghl/PLAYBOOK.md` |
+| **Produção de referência (dogfood Control Gestão)** | https://agente-ia-kommo-controlgestao.vercel.app · projeto Vercel `agente-ia-kommo-controlgestao` |
+| **Template GHL (irmão)** | `clientes/controlgestao/agente-ia/` + `ghl/PLAYBOOK.md` |
 | **Doutrina comum** | `comum/ARQUITETURA.md` · `comum/CONTEXT-ENG.md` · `comum/EVALS.md` · `comum/PEGADINHAS.md` |
 
 ### Anatomia do template
@@ -188,7 +188,7 @@ CLIENT_NAME="Cliente · Agente"                          # carimbo dos alertas
 ### Passo 1 · Copiar + discovery AO VIVO + crm-map
 
 ```bash
-cp -r clientes/metriksales/agente-ia-kommo clientes/<cliente>/agente-ia-kommo
+cp -r clientes/controlgestao/agente-ia-kommo clientes/<cliente>/agente-ia-kommo
 cd clientes/<cliente>/agente-ia-kommo && npm install
 ```
 
@@ -254,7 +254,7 @@ Duas formas, as duas funcionam:
 
 | Opção | Como | Quando usar |
 |---|---|---|
-| **1 — widget-request** (padrão Metrik, plug-compatible) | Duplique um bot widget-request existente e troque a URL do request pra `https://<deploy>.vercel.app/api/salesbot?secret=<WEBHOOK_SECRET>`. O **passo seguinte (step 1) continua enviando `{{json.resposta_ia}}`** | Conta que já tinha o bot do n8n — troca cirúrgica de URL |
+| **1 — widget-request** (padrão Control Gestão, plug-compatible) | Duplique um bot widget-request existente e troque a URL do request pra `https://<deploy>.vercel.app/api/salesbot?secret=<WEBHOOK_SECRET>`. O **passo seguinte (step 1) continua enviando `{{json.resposta_ia}}`** | Conta que já tinha o bot do n8n — troca cirúrgica de URL |
 | **2 — campo do lead** (sem widget) | Bot de **1 bloco "Enviar mensagem"** cujo conteúdo é o campo **"Resposta IA (agente)"** — o transport grava lá antes do run | Conta nova, sem legado |
 
 **Depois de criar:** anote o **`bot_id`** → env **`KOMMO_BOT_ID`** → **REDEPLOY**. Sem isso o sender não dispara (env só vale em deploy novo).
@@ -290,7 +290,7 @@ curl "https://<deploy>/api/followup?secret=XXX&force=1"    # followup manual (by
 
 ### Passo 8 (não é opcional na prática) · Certificar o cérebro com EVALS
 
-⚠️ O template Kommo **ainda não traz o `scripts/evals.mjs`** — **porte do template GHL** (`clientes/metriksales/agente-ia/scripts/evals.mjs`). É porte seco: **no Kommo o `/api/config` já existe**, então o harness funciona **igual, sem adaptação** (ele baixa o prompt de **PRODUÇÃO**, não uma cópia local que você acha que subiu).
+⚠️ O template Kommo **ainda não traz o `scripts/evals.mjs`** — **porte do template GHL** (`clientes/controlgestao/agente-ia/scripts/evals.mjs`). É porte seco: **no Kommo o `/api/config` já existe**, então o harness funciona **igual, sem adaptação** (ele baixa o prompt de **PRODUÇÃO**, não uma cópia local que você acha que subiu).
 
 ```bash
 ANTHROPIC_API_KEY=sk-ant-... node scripts/evals.mjs   # 10/10 ou não sobe
@@ -328,7 +328,7 @@ ANTHROPIC_API_KEY=sk-ant-... node scripts/evals.mjs   # 10/10 ou não sobe
 | **3** | **select/multiselect gravam por `enum_id`, NÃO por value** | por isso o crm-map carrega os enums |
 | **4** | 🚨 **Loop de eco:** `add_message` pode disparar pra mensagem que o **PRÓPRIO bot** enviou — **loop infinito real, aconteceu no Imigre USA** | 3 camadas no template: **hash da última resposta (`ak:lastout:`)** + campo **`direction`** + **rate limit 10/min/lead** |
 | **5** | Webhook chega **form-urlencoded com chaves em colchetes** (`message[add][0][text]`) | o parser cobre formato **PLANO E ANINHADO** |
-| **6** | **Payload confirmado em produção (Metrik):** `account[id]` · `message[add][0][id\|entity_id\|contact_id\|text\|created_at\|attachment[type]\|attachment[link]]` | attachment types: **`voice` / `picture` / `file`**; o **link do áudio é PÚBLICO** (o Groq baixa direto, sem auth) |
+| **6** | **Payload confirmado em produção (Control Gestão):** `account[id]` · `message[add][0][id\|entity_id\|contact_id\|text\|created_at\|attachment[type]\|attachment[link]]` | attachment types: **`voice` / `picture` / `file`**; o **link do áudio é PÚBLICO** (o Groq baixa direto, sem auth) |
 | **7** | `salesbot/run`: `entity_type` é a **STRING `"leads"`** (endpoint legado v2) | — |
 | **7b** | ⚠️ um **502 do `salesbot/run` PODE ter rodado mesmo assim** | o sender **NÃO faz retry em 5xx** — retry cegaria em mensagem duplicada |
 | **8** | **Kommo não tem Calendars API** | `marcar_reuniao` valida a janela do crm-map e cria **TASK (`task_type_id: 2`)** + campo de data + move etapa. **`date_time` grava epoch em SEGUNDOS** (não ms) |
@@ -387,11 +387,11 @@ O agente Kommo **ainda NÃO tem a Central / prompt-store** — o cérebro editá
 
 ## §9 · MONITORAMENTO E ALERTAS (portar do template GHL — validado E2E 11/07/2026)
 
-O padrão completo vive no template GHL (`clientes/metriksales/agente-ia/`) e porta pro Kommo com **adaptações mínimas**:
+O padrão completo vive no template GHL (`clientes/controlgestao/agente-ia/`) e porta pro Kommo com **adaptações mínimas**:
 
 | Camada | Arquivo | O que faz no Kommo |
 |---|---|---|
-| **Alerta instantâneo** | `lib/alert.ts` | Erro no processamento/followup → mensagem **NA HORA** no grupo de WhatsApp de operações via uazapi. Envs `UAZAPI_URL`/`UAZAPI_TOKEN`/`ALERT_GROUP_JID` — grupo multi-cliente **"🚨 Alertas IA - Clientes Metrik"**, JID `120363409250696396@g.us` (**MESMO grupo pra todos os projetos**). Carimbo obrigatório: env **`CLIENT_NAME`** ("Cliente · Agente") no cabeçalho de toda mensagem. **Throttle Redis 10min/tipo.** ✅ **No Kommo o transport uazapi JÁ existe — reusa o mesmo client, sem dependência nova** |
+| **Alerta instantâneo** | `lib/alert.ts` | Erro no processamento/followup → mensagem **NA HORA** no grupo de WhatsApp de operações via uazapi. Envs `UAZAPI_URL`/`UAZAPI_TOKEN`/`ALERT_GROUP_JID` — grupo multi-cliente **"🚨 Alertas IA - Clientes Control Gestão"**, JID `<JID_DO_GRUPO_DE_ALERTAS>@g.us` (**MESMO grupo pra todos os projetos**; preencher com o grupo da Control Gestão). Carimbo obrigatório: env **`CLIENT_NAME`** ("Cliente · Agente") no cabeçalho de toda mensagem. **Throttle Redis 10min/tipo.** ✅ **No Kommo o transport uazapi JÁ existe — reusa o mesmo client, sem dependência nova** |
 | **Guardião** | `lib/guardian.ts` | Check-up diário heurístico: `validate` + erros 24h do execlog + diagnóstico por padrão + **retrigger seguro (máx 3)** + laudo no grupo **SÓ se houver problema** |
 | **Analista semanal** | `lib/analyst.ts` | Segundas: relatório com números **calculados EM CÓDIGO** + Claude analisa as conversas. ✅ **No Kommo ele lê do PRÓPRIO histórico Redis (`ak:conv:{leadId}`) — nem precisa de API externa, é mais fácil que no GHL.** Destaque + até 3 sugestões de prompt **com evidência**. Snapshot comparativo no Redis. **Sugestões NUNCA aplicadas automaticamente** |
 | **Orquestração** | `api/cron-daily.ts` | Dispatcher no **ÚNICO cron diário do Vercel Hobby**: followup → guardião → (segunda) analista |
@@ -467,13 +467,13 @@ curl "https://<deploy>/api/links?secret=XXX"     # lista com as URLs prontas pra
 
 ---
 
-## §11 · ESTADO DO DOGFOOD METRIK (referência viva)
+## §11 · ESTADO DO DOGFOOD CONTROL GESTÃO (referência viva)
 
-> A variante Kommo foi **construída e deployada em 2026-07-11 como dogfood da própria Metrik**. É a conta de referência: quando algo não bate, compare com ela.
+> A variante Kommo foi **construída e deployada em 2026-07-11 como dogfood da própria Control Gestão**. É a conta de referência: quando algo não bate, compare com ela.
 
 | Item | Valor |
 |---|---|
-| Deploy | https://agente-ia-kommo-metriksales.vercel.app |
+| Deploy | https://agente-ia-kommo-controlgestao.vercel.app |
 | Funil | **"Vendas Implementações" — id `12839352`** |
 | Alçada (etapas) | Primeiro contato **99017612** → Qualificação **99017620** → Agendamento de reunião **99017880** |
 | `stageOrder` real | 99017608 (Incoming) · 99017612 · 99017616 (Followup) · 99017620 · 99017880 · 142 (won) · 143 (lost) |

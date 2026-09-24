@@ -2,7 +2,7 @@
 
 > **Vale IGUAL para GHL e Kommo.** O cérebro é o mesmo motor: mesma API, mesmo caching, mesmos limiares. O que muda é **quem guarda o histórico** e **quem entrega a mensagem** — está mapeado no §10.
 >
-> Tudo aqui foi **medido no nosso próprio laboratório** (Metrik, **12/07/2026**, Sonnet 5 + prompt caching). Quando alguém trouxer "a arquitetura de 2026 manda fazer X", **confira contra estes números antes de gastar semana**.
+> Tudo aqui foi **medido no nosso próprio laboratório** (Control Gestão, **12/07/2026**, Sonnet 5 + prompt caching). Quando alguém trouxer "a arquitetura de 2026 manda fazer X", **confira contra estes números antes de gastar semana**.
 
 **Leia este arquivo quando:** for mexer em prompt, custo ou escala · alguém propuser RAG/roteador/otimização de token · precisar decidir Haiku × Sonnet · precisar defender uma escolha com número, não com opinião.
 
@@ -128,7 +128,7 @@ Ordem que a produção validou (detalhe de execução no `ghl/PLAYBOOK.md` / `ko
 
 `identidade` · `números reais da empresa` · **`portas`** (perfil → oferta → caminho) · `tom/formato WhatsApp` · **`regra de ouro`** (responder antes de perguntar, uma pergunta por vez) · `uso das tools` · `funil/qualificação` · `agendamento` · `followup (cadências)` · `voz` · **`limites`** (o que NUNCA falar: prazo, garantia, desconto) · **`regra de suporte`** (escalar sem pitch).
 
-> **Referência de estrutura:** `clientes/metriksales/agente-ia/prompt.md` — **pontuou 9,7/10 nos evals**. Copie a ESTRUTURA, nunca o conteúdo (o conteúdo é do cliente e sai do diagnóstico).
+> **Referência de estrutura:** `clientes/controlgestao/agente-ia/prompt.md` — **pontuou 9,7/10 nos evals**. Copie a ESTRUTURA, nunca o conteúdo (o conteúdo é do cliente e sai do diagnóstico).
 
 ---
 
@@ -144,7 +144,7 @@ ANTHROPIC_API_KEY=sk-ant-... node scripts/evals.mjs
 
 **Como escrever um bom cenário:** critérios **verificáveis**, não gosto. Ruim: "responde bem". Bom: "cita R$179", "NÃO oferece call (comunidade fecha no chat)", "chama `escalar_para_humano`". E **dê ao juiz a oferta oficial no system** — senão ele acusa de alucinação o que está no prompt (falso positivo real que tivemos: o juiz reclamou dos R$179 **corretos**).
 
-### 🎓 Por que evals valem mais que qualquer otimização (a estreia, 12/07/2026 — Bia/Metrik)
+### 🎓 Por que evals valem mais que qualquer otimização (a estreia, 12/07/2026 — Bia/Control Gestão)
 
 Teste manual de 5 cenários deu "tudo ótimo". O harness rodou e:
 

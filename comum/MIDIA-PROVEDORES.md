@@ -123,7 +123,7 @@ Antes de escolher ou trocar:
 Só centralize porque passou. Só mantenha fornecedor extra porque ganhou por
 qualidade, custo ou requisito medido.
 
-## 8 · Dogfood OpenAI-only da Metrik — 24/07/2026
+## 8 · Dogfood OpenAI-only da Control Gestão — 24/07/2026
 
 Produção migrada para:
 

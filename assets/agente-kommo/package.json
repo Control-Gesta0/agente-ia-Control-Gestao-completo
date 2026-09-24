@@ -2,7 +2,7 @@
   "name": "agente-ia-kommo",
   "version": "2.0.0",
   "private": true,
-  "description": "Agente SDR de IA (Kommo, Desenho A/Salesbot) — OpenAI + Kommo v4 + Upstash Redis, sem n8n. Template Metrik.",
+  "description": "Agente SDR de IA (Kommo, Desenho A/Salesbot) — OpenAI + Kommo v4 + Upstash Redis, sem n8n. Template Control Gestão.",
   "scripts": {
     "typecheck": "tsc --noEmit",
     "test": "tsx scripts/test-guards.ts",

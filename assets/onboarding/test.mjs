@@ -15,7 +15,7 @@ function expect(condition, name) {
 
 const fixturePath = resolve(fileURLToPath(new URL('./examples/cliente-ghl.json', import.meta.url)))
 const fixture = JSON.parse(await readFile(fixturePath, 'utf8'))
-const temp = await mkdtemp(join(tmpdir(), 'metrik-onboarding-'))
+const temp = await mkdtemp(join(tmpdir(), 'controlgestao-onboarding-'))
 
 try {
   const valid = validate(fixture)

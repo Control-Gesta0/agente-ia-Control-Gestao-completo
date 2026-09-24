@@ -1,6 +1,6 @@
 # Central v3 — instalar o cockpit
 
-> Origem: dogfood da Metrik, 23/07/2026. Antes de propagar, o agente e a
+> Origem: dogfood da Control Gestão, 23/07/2026. Antes de propagar, o agente e a
 > Central passaram em typecheck/build, 74 asserções, dark/light, desktop/mobile
 > e smoke HTTP nas cinco áreas.
 

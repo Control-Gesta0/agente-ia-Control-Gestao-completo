@@ -199,7 +199,7 @@ function decisions(input) {
 
 function pending(input, result) {
   const rows = result.blockers.map((item, index) =>
-    `| ${index + 1} | ${safe(item)} | ${/credencial|acesso|confirmar|definir|adicionar/i.test(item) ? 'Cliente + Metrik' : 'Metrik'} | aberto |`)
+    `| ${index + 1} | ${safe(item)} | ${/credencial|acesso|confirmar|definir|adicionar/i.test(item) ? 'Cliente + Control Gestão' : 'Control Gestão'} | aberto |`)
   return `# Pendências — ${safe(input.client.name)}
 
 | # | Pendência | Responsável | Estado |
@@ -285,6 +285,20 @@ ${safe(factValue(input.business.tone)) || '[TOM PENDENTE]'}
 
 Responda a dúvida completa antes de perguntar. Faça uma pergunta por resposta.
 Nunca invente preço, prazo, vaga, garantia ou diagnóstico.
+
+## Como escrever
+
+Escreva como a melhor pessoa do atendimento escreve no WhatsApp num dia normal.
+Mensagens curtas, começando pela resposta.
+Não use travessão; use vírgula, ponto ou dois-pontos.
+Não abra com "Ótima pergunta!" ou "Perfeito!" e não feche com "Fico à disposição".
+Não use "não é só X, é Y", lista de três adjetivos nem palavras como "solução",
+"potencializar" ou "no cenário atual".
+
+Exemplos de conversa real boa (cole de 5 a 10 trechos do cliente):
+- [EXEMPLOS DE TOM PENDENTES]
+
+> Antes do eval, passe este rascunho pelo humanizer (\`humanizer/PROMPTS-PT-BR.md\`).
 
 ## Preços
 

@@ -102,7 +102,7 @@ export async function processLead(leadId: number, webhookId: string): Promise<vo
 
       // 2. Porta sem agente: mensagem fixa e finaliza (sem LLM)
       if (!porta.ativa) {
-        const texto = porta.mensagemSemAgente || 'A equipe vai continuar seu atendimento por aqui.'
+        const texto = porta.mensagemSemAgente || 'Anotei aqui. Alguém da equipe continua a conversa com você por aqui.'
         await aplicarFinalizacao(ctx, 'porta_sem_agente', `Assunto: ${porta.label}. Primeira mensagem: ${textoTurno.slice(0, 300)}`)
         const detail = await enviar(leadId, texto)
         await markAnswered(leadId, target.id)

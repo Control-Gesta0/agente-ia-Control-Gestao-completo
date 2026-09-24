@@ -18,7 +18,7 @@ export function eq(nome: string, got: unknown, want: unknown) {
 }
 
 async function main() {
-  const { checkReply, evidenceFound, keepLastQuestion, matchOption, parseNumeroBR } = await import('../lib/guards')
+  const { checkReply, evidenceFound, keepLastQuestion, matchOption, parseNumeroBR, semTravessao } = await import('../lib/guards')
   const { escolhaMenu } = await import('../lib/router')
   const { parseKommoWebhook } = await import('../api/inbound')
   const regras = (t: string) => [...new Set(checkReply(t, []).map(v => v.regra))]
@@ -28,6 +28,12 @@ async function main() {
   eq('JSON vazado', regras('{"respostas":[{"campo":"nome","evidencia":"joão","valor":"João"}]}'), ['texto corrompido'])
   eq('duas perguntas', regras('Qual a idade dele? E quantas pessoas moram na casa?'), ['mais de uma pergunta'])
   eq('texto normal passa', regras('Entendido, Cláudia. Quantas pessoas moram junto com o Davi?'), [])
+  // Tom humano (SKILL §5.1): travessão sai em código
+  eq('travessão é violação', regras('O curso — que começa em março — custa R$ 1.200.'), ['travessão'])
+  eq('aposto vira vírgula', semTravessao('O curso — que começa em março — custa R$ 1.200.'), 'O curso, que começa em março, custa R$ 1.200.')
+  eq('faixa numérica vira "a"', semTravessao('Atendemos das 9–18h.'), 'Atendemos das 9 a 18h.')
+  eq('travessão no fim da frase', semTravessao('Pode deixar — anotei.'), 'Pode deixar, anotei.')
+  eq('sem travessão fica igual', semTravessao('Tá certo, anotei aqui.'), 'Tá certo, anotei aqui.')
   eq('corta eco da pergunta do lead', keepLastQuestion('Você tem direito? Quem avalia é o especialista. Qual a idade dele?', 'eu tenho direito?'), 'Quem avalia é o especialista. Qual a idade dele?')
 
   // Números e opções

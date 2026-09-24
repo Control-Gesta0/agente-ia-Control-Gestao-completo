@@ -1,6 +1,6 @@
 # Central v4.1 — Autonomia em camadas
 
-> Origem: dogfood Metrik, 23/07/2026. Publicada e validada com dados reais:
+> Origem: dogfood Control Gestão, 23/07/2026. Publicada e validada com dados reais:
 > typecheck do agente, 74 testes, build da Central, desktop, 390px, APIs e
 > Shadow E2E controlado.
 

@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://metrik.local/onboarding.schema.json",
-  "title": "Metrik Onboarding Compiler",
+  "$id": "https://controlgestao.local/onboarding.schema.json",
+  "title": "Control Gestão Onboarding Compiler",
   "type": "object",
   "required": ["schemaVersion", "client", "crm", "business", "channel", "operations", "credentials", "evalCases", "sources"],
   "properties": {

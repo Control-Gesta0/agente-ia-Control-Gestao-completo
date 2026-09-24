@@ -2,7 +2,7 @@
 
 > **O que é este documento.** O `FRONTEIRA.md` julgou o backlog por três lentes — negócio, engenharia, ineditismo. Falta a lente que o mestre nomeou em 03/08/2026: **"deixar ainda mais autônomo, com menos suporte pra nós"**. Este arquivo re-olha o organismo inteiro por essa lente e vira o mapa de onde a casa é chamada hoje e o que fecha cada chamado.
 >
-> **Regra de admissão:** a ideia só entra se **corta um chamado real** — do cliente pra Metrik, ou de um humano da Metrik pra dentro da própria operação. Feature bonita que não tira ninguém do meio não entra aqui (vai pro `FRONTEIRA.md`).
+> **Regra de admissão:** a ideia só entra se **corta um chamado real** — do cliente pra Control Gestão, ou de um humano da Control Gestão pra dentro da própria operação. Feature bonita que não tira ninguém do meio não entra aqui (vai pro `FRONTEIRA.md`).
 >
 > **Este dossiê conversa com:** `FRONTEIRA.md` (reaproveita 4 peças do pódio, agora reordenadas), `CENTRAL.md` (é onde quase toda autonomia do cliente aparece), `ESCOLA.md` (o maior ralo de suporte recorrente), `SKILL.md §1` (o organismo que já existe).
 
@@ -15,7 +15,7 @@
 | ❌ | **Não existe** — é build novo |
 | 🩸 | nasce de dor real com data |
 
-**Legenda de sentido:** **[A]** corta suporte que a Metrik dá ao cliente · **[B]** corta trabalho interno da casa.
+**Legenda de sentido:** **[A]** corta suporte que a Control Gestão dá ao cliente · **[B]** corta trabalho interno da casa.
 
 ---
 
@@ -29,7 +29,7 @@ Três leis, e elas evitam o erro clássico de "automatizar" gerando um chamado n
 
 **LEI 3 — AUTO-CURA NUNCA CORRIGE CÓDIGO, SÓ DESTRAVA OPERAÇÃO.** O sistema pode re-disparar um lead mudo, reconectar um webhook, avisar de token expirando, pausar por custo. Ele **jamais** reescreve prompt, tool ou lógica sozinho. Correção de código é sempre humana e passa por eval (é a lição do guardião, `SKILL.md §1`). A fronteira: destravar ≠ consertar.
 
-> 🩸 **Por que a Lei 1 é dura:** o guardião hoje detecta B.O. e **alerta no grupo interno da Metrik**. Do ponto de vista do cliente, isso é invisível — ele continua ligando "a IA parou". A detecção existe; a autonomia **não**, porque a informação não chega em quem tomaria a ação. Autonomia é a informação certa na mão de quem age, não o alerta no lugar errado.
+> 🩸 **Por que a Lei 1 é dura:** o guardião hoje detecta B.O. e **alerta no grupo interno da Control Gestão**. Do ponto de vista do cliente, isso é invisível — ele continua ligando "a IA parou". A detecção existe; a autonomia **não**, porque a informação não chega em quem tomaria a ação. Autonomia é a informação certa na mão de quem age, não o alerta no lugar errado.
 
 ---
 
@@ -41,7 +41,7 @@ Cada linha é uma razão pela qual o telefone toca. A cura está no §2/§3.
 |---|---|---|---|---|---|
 | R1 | "Desliga a IA agora" / "essa semana não oferece horário" | média, **crítica** | você: tira tag / desativa workflow / redeploy (~20 min) | Parada de emergência + Recado (§2.1) | [A] |
 | R2 | "A IA parou / não respondeu o lead" | **alta** | você investiga (8/10 = gate/janela/credencial/pausa) | Guardião → autoatendimento (§2.2) | [A] |
-| R3 | "Muda isso na IA" (tom, resposta, regra) | **alta, recorrente** | cliente escreve na Escola → **humano da Metrik lê a fila e escreve o delta** | Escola Fase 1-3, o alfaiate (§2.3) | [A] |
+| R3 | "Muda isso na IA" (tom, resposta, regra) | **alta, recorrente** | cliente escreve na Escola → **humano da Control Gestão lê a fila e escreve o delta** | Escola Fase 1-3, o alfaiate (§2.3) | [A] |
 | R4 | "Mudou meu preço / meu produto" | média | ticket → humano edita | Catálogo self-service (§2.4) | [A] |
 | R5 | "Tá funcionando? A IA vendeu?" | média | você manda print / explica | Conversão por versão + Briefing (§2.5) | [A] |
 | R6 | "A IA marcou horário que não existe / card veio vazio" | baixa, **cara** (queima lead+closer) | você conserta e pede desculpa | Contrato default-FAIL + slot_token (§2.6) | [A] |
@@ -58,7 +58,7 @@ Cada linha é uma razão pela qual o telefone toca. A cura está no §2/§3.
 ### §2.1 · PARADA DE EMERGÊNCIA + RECADO DO DIA ✅ 🥇 — NO AR (dogfood GHL, 03/08/2026)
 **Corta:** R1. **Esforço:** horas + 30min de propagação. **Herança:** `FRONTEIRA.md §1` (pódio).
 
-> ✅ **Construída e validada E2E em produção** (cobaia Metrik GHL, 03/08/2026). Código: `agente-ia/lib/controls.ts` (novo asset) + patches em `api/inbound.ts` (pausa é a 1ª coisa, fail-open), `lib/llm.ts` (recado no bloco dinâmico, NÃO no simulador), `lib/guardian.ts` (alerta pausa >24h), `api/central.ts` (`recurso=controle`, case não function — respeita teto Hobby). Front: `area-cliente/components/OperatorControls.tsx` no topo da Visão Geral (banner permanente + botão + recado com TTL, esqueleto anti-flash). E2E: pausou → lead bloqueado com registro no diário → reativou; recado gravado/limpo. Chaves Redis `agente:pausa` (sem TTL) e `agente:recado` (TTL). **Falta:** propagar pra frota (4ª perna) + empacotar em `assets/`.
+> ✅ **Construída e validada E2E em produção** (cobaia Control Gestão GHL, 03/08/2026). Código: `agente-ia/lib/controls.ts` (novo asset) + patches em `api/inbound.ts` (pausa é a 1ª coisa, fail-open), `lib/llm.ts` (recado no bloco dinâmico, NÃO no simulador), `lib/guardian.ts` (alerta pausa >24h), `api/central.ts` (`recurso=controle`, case não function — respeita teto Hobby). Front: `area-cliente/components/OperatorControls.tsx` no topo da Visão Geral (banner permanente + botão + recado com TTL, esqueleto anti-flash). E2E: pausou → lead bloqueado com registro no diário → reativou; recado gravado/limpo. Chaves Redis `agente:pausa` (sem TTL) e `agente:recado` (TTL). **Falta:** propagar pra frota (4ª perna) + empacotar em `assets/`.
 
 Duas chaves no Redis lidas no topo do `api/inbound.ts`:
 - `agente-<slug>:pausa` → agente responde 200 e não faz nada. Botão vermelho na Central com motivo + quem pausou + banner permanente.
@@ -83,8 +83,8 @@ Hoje o guardião diagnostica e fala **no grupo interno**. A autonomia é traduzi
 ### §2.3 · ESCOLA FASE 1-3 — O ALFAIATE ❌ 🥇 (o prêmio grande)
 **Corta:** R3 (o maior ralo recorrente). **Esforço:** dias (a skill estima ~8,5d p/ o pacote; Fase 1 sozinha é menor). **Herança:** `ESCOLA.md` — Fase 0 já construída (captura+triagem+trava de perfil), Fases 1-3 não.
 
-Hoje: cliente corrige → vira ticket triado → **um humano da Metrik lê a fila e escreve o delta no prompt**. O alfaiate fecha esse loop:
-- **Fase 1 (o alfaiate):** o sistema pega a correção em português, roteia pela régua §2 (CENTRAL), **escreve o delta** na seção certa, **roda o eval-porteiro** e **propõe** — o cliente confirma. Sem Metrik no meio no caso comum.
+Hoje: cliente corrige → vira ticket triado → **um humano da Control Gestão lê a fila e escreve o delta no prompt**. O alfaiate fecha esse loop:
+- **Fase 1 (o alfaiate):** o sistema pega a correção em português, roteia pela régua §2 (CENTRAL), **escreve o delta** na seção certa, **roda o eval-porteiro** e **propõe** — o cliente confirma. Sem Control Gestão no meio no caso comum.
 - **Fase 2 (o caderno):** memória das correções já feitas, pra não repetir.
 - **Fase 3 (a faxina):** detecta correções que se contradizem e pede desempate.
 
@@ -115,9 +115,9 @@ Sonda proativa: ping no canal (uazapi `/status`, ou detectar sequência de outbo
 
 O cliente, na Central, **põe a própria chave OpenAI** (BYO — custo vira dele), **liga/desliga** voz/imagem/PDF/áudio, e vê o **custo estimado** por tipo de interação. Reusa a arquitetura da §2.1 (chave Redis + `recurso=` + Central).
 
-> ✅ **Construída e validada E2E** (cobaia Metrik GHL, 03/08/2026). Código: `agente-ia/lib/settings.ts` (novo asset — key **cifrada AES-256-GCM** com segredo derivado do WEBHOOK_SECRET, nunca devolvida ao browser, só hint `...ABCD`; validada na OpenAI `/models` antes de gravar; toggles `agente:cfg:features` default tudo-on; `estimarCustos()` com preços do CONFIG). Refatorados os 5 pontos que criavam cliente OpenAI (`llm/llm-json/media/stt/voice`) pra usar `getOpenAI()`/`getOpenAIKey()` (key vigente = cliente ou fallback env, cache 30s). Gating no orquestrador `api/inbound.ts` (mídia/voz respeitam toggle). Endpoint `api/central.ts recurso=settings`. Front: `area-cliente/components/AISettings.tsx` + rota `/inteligencia` + card no hub Configurações. E2E: GET estado, toggle liga/desliga, validador **rejeitou key inválida (422)**, custos calculados (conversa típica R$0,08). **Falta:** propagar pra frota + empacotar em `assets/`.
+> ✅ **Construída e validada E2E** (cobaia Control Gestão GHL, 03/08/2026). Código: `agente-ia/lib/settings.ts` (novo asset — key **cifrada AES-256-GCM** com segredo derivado do WEBHOOK_SECRET, nunca devolvida ao browser, só hint `...ABCD`; validada na OpenAI `/models` antes de gravar; toggles `agente:cfg:features` default tudo-on; `estimarCustos()` com preços do CONFIG). Refatorados os 5 pontos que criavam cliente OpenAI (`llm/llm-json/media/stt/voice`) pra usar `getOpenAI()`/`getOpenAIKey()` (key vigente = cliente ou fallback env, cache 30s). Gating no orquestrador `api/inbound.ts` (mídia/voz respeitam toggle). Endpoint `api/central.ts recurso=settings`. Front: `area-cliente/components/AISettings.tsx` + rota `/inteligencia` + card no hub Configurações. E2E: GET estado, toggle liga/desliga, validador **rejeitou key inválida (422)**, custos calculados (conversa típica R$0,08). **Falta:** propagar pra frota + empacotar em `assets/`.
 >
-> 🩸 **Cicatriz — `required('OPENAI_API_KEY')` no boot:** no modelo BYO puro (cliente sem key da Metrik no env), o `config.ts` derrubaria o boot. No cobaia a Metrik TEM env de fallback, então não quebra. Ao replicar pra cliente BYO-only, tornar a env opcional e exigir que ele configure a key antes do 1º atendimento.
+> 🩸 **Cicatriz — `required('OPENAI_API_KEY')` no boot:** no modelo BYO puro (cliente sem key da Control Gestão no env), o `config.ts` derrubaria o boot. No cobaia a Control Gestão TEM env de fallback, então não quebra. Ao replicar pra cliente BYO-only, tornar a env opcional e exigir que ele configure a key antes do 1º atendimento.
 
 ### §2.8 · CIRCUIT BREAKER DE CUSTO ❌
 **Corta:** R8. **Esforço:** meio dia. **Novo.**
@@ -139,7 +139,7 @@ Hoje, subir versão do motor = redeployar cliente a cliente na mão, torcendo pr
 ### §3.2 · SELF-SERVICE DE ONBOARDING ⚠️
 **Corta:** R10. **Esforço:** médio. **Herança:** `ONBOARDING.md` (Compiler) + `QUESTIONARIO-CLIENTE.md` já existem.
 
-O cliente preenche o questionário (já é formulário ClickUp) e o Compiler gera o **rascunho** de diagnóstico/prompt/crm-map. A Metrik revisa em vez de escrever do zero. Já há muito construído — o gap é ligar a entrada do cliente na saída do Compiler sem digitação manual. **Verificar o estado real antes de dimensionar.**
+O cliente preenche o questionário (já é formulário ClickUp) e o Compiler gera o **rascunho** de diagnóstico/prompt/crm-map. A Control Gestão revisa em vez de escrever do zero. Já há muito construído — o gap é ligar a entrada do cliente na saída do Compiler sem digitação manual. **Verificar o estado real antes de dimensionar.**
 
 ### §3.3 · CANÁRIO DE DRIFT DIÁRIO ❌
 **Corta:** R11. **Esforço:** meio dia. **Herança:** `FRONTEIRA.md §3` (pódio).
@@ -212,6 +212,6 @@ Pedido do mestre (03/08): capturar origem/UTM/click-IDs na 1ª mensagem, pra tod
 
 ## §6 · REGRAS DE PROPAGAÇÃO DESTE DOSSIÊ
 
-Toda peça construída aqui segue o ritual normal da `SKILL.md §7`: cicatriz na fonte, Códex, plugin, e a 4ª perna (redeploy da frota — que §3.1 quer justamente automatizar). Peça de autonomia **sempre** nasce no cobaia GHL da Metrik (`clientes/metriksales/agente-ia/` + `area-cliente/`), prova E2E, e só então vira asset/patch replicável. Autonomia sem prova é a pior — porque o cliente confia nela e para de vigiar.
+Toda peça construída aqui segue o ritual normal da `SKILL.md §7`: cicatriz na fonte, Códex, plugin, e a 4ª perna (redeploy da frota — que §3.1 quer justamente automatizar). Peça de autonomia **sempre** nasce no cobaia GHL da Control Gestão (`clientes/controlgestao/agente-ia/` + `area-cliente/`), prova E2E, e só então vira asset/patch replicável. Autonomia sem prova é a pior — porque o cliente confia nela e para de vigiar.
 </content>
 </invoke>

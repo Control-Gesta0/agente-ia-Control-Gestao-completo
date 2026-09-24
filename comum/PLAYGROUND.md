@@ -40,11 +40,11 @@ Ou seja: o cliente **vê o que a IA faria por trás**, não só o que ela fala.
 | Publicar ao vivo (sem deploy) | ✅ `prompt-store.ts` | ❌ ainda não (ver §9) |
 | 10 evals como porteiro do Publicar | ✅ `lib/evals.ts` server-side | ❌ ainda não (ver §9) |
 | Histórico 20 versões + rollback + voltar-ao-de-fábrica | ✅ | ❌ ainda não |
-| No ar desde | Metrik, **19/07/2026** | Metrik (dogfood Kommo), **19/07/2026** |
+| No ar desde | Control Gestão, **19/07/2026** | Control Gestão (dogfood Kommo), **19/07/2026** |
 
 **Referências de implementação:**
-- GHL: `clientes/metriksales/agente-ia/` + `clientes/metriksales/area-cliente/app/cerebro/page.tsx`
-- Kommo: `clientes/metriksales/agente-ia-kommo/` (deploy `agente-ia-kommo-metriksales.vercel.app`)
+- GHL: `clientes/controlgestao/agente-ia/` + `clientes/controlgestao/area-cliente/app/cerebro/page.tsx`
+- Kommo: `clientes/controlgestao/agente-ia-kommo/` (deploy `agente-ia-kommo-controlgestao.vercel.app`)
 
 > **📌 Decisão de arquitetura (Kommo, 19/07):** servir o painel do próprio agente elimina um projeto Vercel, um deploy e um conjunto de envs por cliente. O preço é HTML na mão (sem componentes React) e auth por query string. Pra cliente que já tem Central completa (GHL), a página fica na Central; pra cliente que só quer o laboratório, o self-contained ganha.
 
@@ -189,7 +189,7 @@ editar prompt  →  testar no chat (FEEL)  →  rodar os 10 evals (EXAME)  →  
 5. Verifica no ar: POST /api/prompt {acao:'chat'} e confirma { ok }
 ```
 
-> **📌 Este foi o PRIMEIRO CASO da 4ª perna:** o playground "Testar ao vivo" entrou no ar **na Metrik em 19/07/2026** e ficou **pendente propagar aos demais clientes**. Componente que só vive no template é igual conhecimento que só vive no `.md`: **não chegou em quem usa.**
+> **📌 Este foi o PRIMEIRO CASO da 4ª perna:** o playground "Testar ao vivo" entrou no ar **na Control Gestão em 19/07/2026** e ficou **pendente propagar aos demais clientes**. Componente que só vive no template é igual conhecimento que só vive no `.md`: **não chegou em quem usa.**
 
 ---
 
