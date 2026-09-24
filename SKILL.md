@@ -29,8 +29,15 @@ Depois disso, `comum/DIAGNOSTICO.md` significa `/tmp/control-gestao-skill/comum/
 Clone **uma vez por sessão**, na primeira vez que precisar de qualquer referência, e leia
 **só o arquivo que a tarefa pede** — não carregue a biblioteca inteira.
 
-> `raw.githubusercontent.com` costuma ser bloqueado no proxy; use `git clone` (github.com),
-> que funciona. Se o clone falhar, diga isso ao mestre e peça os arquivos em anexo — não
+> O proxy varia por ambiente: em alguns `git clone` (github.com) funciona e `raw.githubusercontent.com`
+> é bloqueado; em outros (ex.: sessões Cowork na nuvem) é o contrário. Se o clone falhar, baixe
+> **só o arquivo que a tarefa pede** pelo raw, mantendo o caminho:
+>
+> ```bash
+> P=comum/DIAGNOSTICO.md; mkdir -p /tmp/control-gestao-skill/$(dirname $P) && curl -sSfL -o /tmp/control-gestao-skill/$P https://raw.githubusercontent.com/Control-Gesta0/agente-ia-Control-Gestao-completo/main/$P
+> ```
+>
+> Se os dois caminhos falharem, diga isso ao mestre e peça os arquivos em anexo — não
 > invente o conteúdo de uma referência que você não leu.
 
 ### Mapa rápido
