@@ -128,7 +128,7 @@ uazapi webhook (in / out / fromMe → histórico COMPLETO, os 2 lados)
 | `api/cerebro.ts` · `api/prompt.ts` | Playground "Testar ao vivo" |
 | `api/links.ts` · `api/r/` | Links rastreáveis + redirecionador público |
 | `api/config.ts` · `api/executions.ts` | Config (usada pelos evals) · diário |
-| `scripts/create_webhook.py` · `scripts/simulate_inbound.py` | Webhook via API · teste E2E sem WhatsApp |
+| `scripts/create-webhook.ts` · `scripts/simulate-inbound.ts` | Webhook via API · teste E2E sem WhatsApp |
 
 ---
 
@@ -236,10 +236,11 @@ curl "https://<deploy>.vercel.app/api/validate?secret=XXX"      # TEM que dar {"
 ### Passo 4 · Webhook de entrada **VIA API** (não no UI)
 
 ```bash
-python scripts/create_webhook.py "https://<deploy>.vercel.app/api/inbound?secret=<WEBHOOK_SECRET>"
+npx tsx scripts/create-webhook.ts           # só LISTA os webhooks atuais da conta
+npx tsx scripts/create-webhook.ts --criar   # cria <DEPLOY_URL>/api/inbound?secret=<WEBHOOK_SECRET>
 ```
 
-Faz `POST /api/v4/webhooks {destination, settings: ["add_message"]}` — o **mesmo evento** que o ROTEADOR do n8n usa. O script lê `KOMMO_DOMAIN`/`KOMMO_TOKEN` do `.env.local`.
+Faz `POST /api/v4/webhooks {destination, settings: ["add_message"]}` — o **mesmo evento** que o ROTEADOR do n8n usa. O script lê `KOMMO_DOMAIN`/`KOMMO_TOKEN`/`DEPLOY_URL`/`WEBHOOK_SECRET` do `.env.local`. Rode primeiro sem `--criar` e **confirme com o responsável antes de criar**: é ação externa na conta do cliente. O script não remove nenhum webhook existente.
 
 > No **Desenho B** o `add_message` é redundante (a uazapi já entrega tudo) — pode remover.
 
@@ -270,7 +271,7 @@ Duas formas, as duas funcionam:
 ### Passo 6 · Testes (E2E sem WhatsApp e com WhatsApp)
 
 ```bash
-python scripts/simulate_inbound.py <LEAD_ID> "quero saber do agente de ia"
+npx tsx scripts/simulate-inbound.ts <LEAD_ID> "quero saber do agente de ia"   # DEPLOY_URL no .env.local
 curl "https://<deploy>/api/executions?secret=XXX"          # o diário: saiu execução?
 curl "https://<deploy>/api/followup?secret=XXX&force=1"    # followup manual (bypass da janela)
 ```
@@ -290,11 +291,14 @@ curl "https://<deploy>/api/followup?secret=XXX&force=1"    # followup manual (by
 
 ### Passo 8 (não é opcional na prática) · Certificar o cérebro com EVALS
 
-⚠️ O template Kommo **ainda não traz o `scripts/evals.mjs`** — **porte do template GHL** (`clientes/controlgestao/agente-ia/scripts/evals.mjs`). É porte seco: **no Kommo o `/api/config` já existe**, então o harness funciona **igual, sem adaptação** (ele baixa o prompt de **PRODUÇÃO**, não uma cópia local que você acha que subiu).
+O template Kommo já traz o harness: `scripts/evals.ts` + os cenários do cliente em `evals/cenarios.ts`. Ele roda os prompts **locais** com as tools **reais** numa porta em memória (zero efeito no CRM), confere em código tool chamada, campo gravado, finalização e trava, e passa os critérios para um juiz cego. Qualquer checagem ou critério reprovado → `exit 1`.
 
 ```bash
-ANTHROPIC_API_KEY=sk-ant-... node scripts/evals.mjs   # 10/10 ou não sobe
+EVAL_REPS=3 npm run evals          # todos aprovados ou não sobe (OPENAI_API_KEY no .env.local)
+npx tsx scripts/evals.ts <id>      # roda só os cenários com esse id
 ```
+
+⚠️ Como o exame roda o prompt **local**, o deploy tem que levar **exatamente** o prompt que passou. Modelos: `LLM_MODEL` (agente) e `EVAL_JUDGE_MODEL` (juiz).
 
 **EVALS SÃO OBRIGATÓRIOS antes de todo deploy de prompt.** Comprovado no GHL: pegaram **2 defeitos + 1 regressão invisíveis ao teste manual** (8,2 → 9,7/10). Detalhe do harness, os 8 cenários que todo cliente precisa e a regra do juiz: `comum/EVALS.md`.
 
@@ -509,7 +513,7 @@ curl "https://<deploy>/api/links?secret=XXX"     # lista com as URLs prontas pra
 
 | Sintoma | Primeiro passo |
 |---|---|
-| "Nem respondeu" | Saiu execução em `/api/executions`? **Não** = webhook/gate (rode `simulate_inbound.py` pra provar que o código roda) · **Sim** = leia o erro no diário |
+| "Nem respondeu" | Saiu execução em `/api/executions`? **Não** = webhook/gate (rode `scripts/simulate-inbound.ts` pra provar que o código roda) · **Sim** = leia o erro no diário |
 | Respondeu mas o lead não recebeu | `KOMMO_BOT_ID` setado **e redeployado**? · o bot está publicado/ativo? · o outbox (`ak:outbox:`) foi consumido? · `salesbot/run` deu 502 (**pode ter rodado — não repita**) |
 | Resposta duplicada | Dois agentes com gate aberto (n8n `IA` + este `IAV`)? · número em 2 sistemas (**Kommo + uazapi**)? · `ak:via:` do lead |
 | Loop infinito de mensagens | Anti-eco: `ak:lastout:` · campo `direction` · rate limit 10/min (pegadinha 4) |

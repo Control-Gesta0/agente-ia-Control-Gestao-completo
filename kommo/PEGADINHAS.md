@@ -228,10 +228,10 @@ Replicar o agente para um cliente Kommo leva **~meio dia** (7 passos). Detalhe o
 | **1** | Copiar pasta → prompt novo → **discovery AO VIVO** (`GET /api/v4/leads/pipelines` + `GET /api/v4/leads/custom_fields`) → montar o `crm-map` | IDs de snapshot/memória. **Sem os `enum_id`s, §2.3 te pega.** |
 | **2** | Criar campo **TEXTAREA "Resposta IA (agente)"** no lead: `POST /api/v4/leads/custom_fields` | Sem esse campo, o Desenho A não tem onde **depositar** a resposta |
 | **3** | `vercel link` + envs + deploy → `GET /api/validate?secret=` tem que dar `ok:true` | Envs: `KOMMO_DOMAIN` / `KOMMO_TOKEN` / `KOMMO_ACCOUNT_ID` / `KOMMO_BOT_ID`, `TRANSPORT`, `ANTHROPIC`, `UPSTASH`, **`WEBHOOK_SECRET` novo (por cliente)**, `GATE_TAG` |
-| **4** | Criar o webhook de entrada **VIA API, não no UI**: `python scripts/create_webhook.py "https://<deploy>/api/inbound?secret=X"` com `settings: ["add_message"]` | Criar no UI é onde se erra o filtro e nasce o §2.4 (eco) |
+| **4** | Criar o webhook de entrada **VIA API, não no UI**: `npx tsx scripts/create-webhook.ts --criar` (lê `DEPLOY_URL` + `WEBHOOK_SECRET` do `.env.local`) com `settings: ["add_message"]` | Criar no UI é onde se erra o filtro e nasce o §2.4 (eco) |
 | **5** | **Salesbot de envio no UI — ÚNICO passo manual (~3 min)**: duplicar um bot widget-request existente trocando a URL para `/api/salesbot?secret=X` (o passo seguinte envia `{{json.resposta_ia}}`) **OU** um bot de 1 bloco "Enviar mensagem" com o campo "Resposta IA (agente)" | Duplicar o bot ERRADO (ver §5, bot 62431) |
 | **5b** | **Anotar o `bot_id` → env `KOMMO_BOT_ID` → REDEPLOY** | **Sem o redeploy o sender NÃO dispara** — depósito acontece, envio não. Sintoma clássico de "o agente ficou mudo" |
-| **6** | Teste: `scripts/simulate_inbound.py <lead_id> "msg"` — **o lead PRECISA ter a `GATE_TAG`** — depois conferir o card + `/api/executions?secret=` | Testar em lead sem a tag e concluir que "não funciona" |
+| **6** | Teste: `npx tsx scripts/simulate-inbound.ts <lead_id> "msg"` — **o lead PRECISA ter a `GATE_TAG`** — depois conferir o card + `/api/executions?secret=` | Testar em lead sem a tag e concluir que "não funciona" |
 | **7** | **Rampagem pela `GATE_TAG`**: a tag no lead **LIBERA** o agente; a tag `atendimento-humano` **DESLIGA** | Rampagem pulada = IA em lead errado no dia 1 |
 
 ---
