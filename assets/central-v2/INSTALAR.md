@@ -1,5 +1,10 @@
 # CENTRAL v2 — instalar num cliente
 
+> ⚠️ **LEGADO desde 08/10/2026.** Cliente novo não usa este pacote: a Central é
+> construída igual à da InovPay, pelo `assets/central-v5/INSTALAR.md`
+> (`CENTRAL.md §10.1`). Use este guia só para manter uma Central antiga que já
+> está no ar ou para tirar dele uma peça que um cliente precise (`CENTRAL.md §1.1`).
+
 > O padrão da Central (`CENTRAL.md`) em código: a **régua de destino**, o
 > **catálogo**, a **base de conhecimento**, as **mídias**, a tela unificada
 > **Conteúdo** e os primitivos de UI com tema claro/escuro.

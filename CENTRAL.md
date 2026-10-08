@@ -14,20 +14,21 @@
 alguém propuser "vou fazer diferente nesse cliente" · você precisar decidir **onde um conhecimento
 mora** (a régua do §2) · for propagar uma melhoria pra frota.
 
-> 📦 **Código em três camadas:** `assets/central-v2/` mantém o motor de conteúdo
-> (régua, catálogo, conhecimento, mídias e hub). `assets/central-v3/` instala o
-> **cockpit canônico de 5 áreas + ledger de custos**. `assets/central-v4/`
-> adiciona a **Central Autônoma em camadas (v4.1)**: Briefing, comando, Flight Recorder, Radar,
-> Mapa Vivo, Shadow protegido, simulador e Recibo de Valor. A base foi construída no
-> dogfood da Control Gestão em 23/07/2026: typecheck limpo, **74 asserções**, build,
-> dark/light, desktop/mobile, deploy e smoke HTTP em produção. O Shadow foi
-> provado com um caso real: R$0,1056 dentro da reserva de R$0,20, 4/4 sinais,
-> tools simuladas e nenhuma publicação. O endpoint financeiro está provado; a
-> primeira execução real de atendimento com ledger ainda precisa acontecer.
-> Em 23/07/2026, a v4.1 foi publicada depois de uma auditoria de densidade:
-> Resultados ganhou subabas exclusivas, Ensinar passou a abrir por escolha,
-> Visão Geral esconde sinais secundários e o mobile fechou com
-> `scrollWidth === clientWidth` em 375px.
+> ⭐ **O PADRÃO VIGENTE É A CENTRAL v5 = A CENTRAL DA INOVPAY (desde 08/10/2026).**
+> Toda Central nova é construída **igual à da InovPay**: quatro abas (Estatísticas,
+> Teste, Ensinar, Como usar), identidade Control Gestão, Ensinar sem edição manual e
+> publicação só com exame. O código é `assets/central-v5/` (cópia fiel de
+> `Control-Gesta0/inovpay/central`, commit `08daba9`) e o passo a passo é
+> `assets/central-v5/INSTALAR.md`. Não monte Central por camadas nem aba por aba: copie
+> a v5 e troque o conteúdo.
+>
+> 📦 **Legado, consulta só:** `assets/central-v2/` (motor de conteúdo: régua, catálogo,
+> conhecimento, mídias), `assets/central-v3/` (cockpit de 5 áreas + ledger) e
+> `assets/central-v4/` (camada Autônoma v4.1: Briefing, comando, Flight Recorder, Radar,
+> Mapa Vivo, Shadow, E se?, Recibo, Recuperação). Servem para manter as Centrais v4.1 que
+> já estão no ar e como fonte de peças que um cliente específico precise (§1.1). A v4.1
+> foi provada no dogfood da Control Gestão em 23/07/2026 (typecheck, 74 asserções,
+> build, dark/light, desktop/mobile, smoke HTTP).
 
 **Legenda de origem** (de onde cada peça do padrão veio):
 | Selo | Significado |
@@ -63,96 +64,112 @@ e a skill sabe propagar. Central parada é produto morrendo devagar.
 
 ---
 
-## §1 · O MAPA DAS ÁREAS (o contrato de cada uma)
+## §1 · O MAPA DAS ABAS (o contrato de cada uma)
 
-A Central v3 tem **5 áreas principais**. Feature técnica não ganha item de menu
-automaticamente: primeiro se decide qual pergunta do dono ela ajuda a responder.
+A Central v5 tem **4 abas**, nessa ordem, com esses nomes. Feature técnica não
+ganha aba: primeiro se decide qual pergunta do dono ela responde e em qual das
+quatro ela mora.
 
-| Área | Pergunta que responde | O que contém | Trava por baixo |
+| Aba | Pergunta que responde | O que contém | Trava por baixo |
 |---|---|---|---|
-| **Visão Geral** | “Está saudável, produzindo e valendo o investimento?” | saúde, atenção, resultado de hoje, custo, funil resumido e próximos passos | só fica verde depois que **todas** as fontes responderem |
-| **Operação** | “O que está acontecendo, o que aconteceu e quem o follow-up trouxe de volta?” | Agora · Recuperação · Histórico · Funil · Agenda | PII anonimizada + custo auditável por execução; recuperação separa resposta de objetivo |
-| **Ensinar** | “Como corrijo ou atualizo a IA?” | Testar e corrigir · Regras · Conteúdo (vende/responde/envia) · editor técnico só agência | régua §2 + eval-porteiro + perfil |
-| **Resultados** | “Que valor produziu e quanto custou?” | hoje/7d/30d, média por execução, série diária e composição do gasto | histórico sem custo fica “não medido”; nunca é inventado |
-| **Configurações** | “Onde ajusto estrutura e sistema?” | conteúdo, habilidades, funil, sistema, segurança e roadmap | detalhes técnicos no segundo nível |
+| **Estatísticas** | “Ela está bem, o que pede decisão e quanto custou?” | subabas **Visão geral** (veredito, o que pede decisão, quatro números de hoje) · **Operação** (Agora · Passagens · Histórico · Funil) · **Resultados** (Resumo · Triagem, 7 ou 30 dias, custo) · **Sistema** (agente, CRM e quem ela atende) | zero tokens; só fica verde depois que **todas** as fontes responderem; PII mascarada no histórico |
+| **Teste** | “Como ela responderia isso?” | laboratório com a assistente de verdade (mesmo cérebro, ferramentas e travas) numa porta em memória; opções de perfil, fora do horário e versão no ar × rascunho; “No CRM isso faria”; **Corrigir** em cada resposta | nada vai pro CRM nem pro WhatsApp; teto diário de mensagens; custo na tela |
+| **Ensinar** | “Como corrijo ou atualizo a IA?” | **Pedir mudança** (em português, com até 3 arquivos ou links) · **Conversas reais** (corrigir resposta do WhatsApp) · **O que ela sabe** (textos da base, só leitura); quadro de versão no ar, rascunho e versões anteriores | **ninguém edita texto à mão**; a IA (curador) decide o destino e escreve no rascunho; publicar = exame (§6) |
+| **Como usar** | “Como a equipe trabalha com ela?” | **Passo a passo** · **Fluxo do cliente** (cada etapa com o texto da base que está no ar) · **Sua base** (versão, textos por assunto, quem muda o quê) · **Equipe no CRM** (tags, combinados, dúvidas) | lê a base publicada: mudou em Ensinar, mudou aqui; o conteúdo do cliente vive só em `lib/como-usar.ts` |
 
-**Contrato didático de Ensinar (v3.1):** a tela não começa por abas técnicas.
-Ela mostra a jornada **escolher exemplo → apontar erro → ensinar do seu jeito →
-validar antes de publicar**. Depois oferece três fontes mutuamente exclusivas:
-simular agora, conversa real ou conversa colada. “Regras” é leitura;
-“Conteúdo” é destino próprio; “Editor técnico” só existe para agência. A pessoa
-entende o processo antes de receber o campo de ação.
+Mais duas peças globais: **Pergunte à Central** (botão no menu, `Ctrl K`,
+resposta calculada em código, zero tokens) e **login por senha** (cookie
+assinado, 12 h; tudo exige sessão, inclusive `/api`).
 
-🩸 **A dor que forçou a v3:** nove itens no menu, todos com o mesmo peso, e
-headlines de landing page em toda rota. As features eram boas, mas o cliente
-precisava conhecer nossa arquitetura para encontrar o que queria. A v3 organiza
-por **intenção de negócio**, não por nome de módulo.
+**Por que a v5** (decisão do mestre, 08/10/2026, depois da InovPay):
 
-### §1.1 · A camada Autônoma v4
+- **Leitura numa aba só.** Visão geral, Operação, Resultados e Sistema eram quatro
+  itens de menu na v4.1. Na v5 viram subabas de Estatísticas e dividem a mesma
+  leitura por 1 minuto: trocar de subaba não busca o CRM de novo.
+- **Testar ganhou aba própria.** É o que a equipe do cliente mais usa no dia a dia,
+  e o botão Corrigir em cada resposta leva direto pro Ensinar.
+- **Ensinar sem editor.** Na v4.1 o dono tinha seis modos e a agência um editor de
+  texto cru. Na v5 ninguém digita no prompt: a equipe pede, a IA muda o rascunho
+  por troca exata de trecho, e o exame decide se vale.
+- **Como usar** é o manual vivo que antes não existia: a equipe do cliente aprende
+  a usar a Central e entende o fluxo do atendimento sem chamar a gente.
 
-A v4 não adiciona aba principal. Ela muda o verbo da Central:
+🩸 **A dor que forçou a v3 (continua valendo):** nove itens no menu, todos com o
+mesmo peso, e headlines de landing page em toda rota. O cliente precisava
+conhecer nossa arquitetura para achar o que queria. Organize por **intenção de
+negócio**, não por nome de módulo. A v5 leva isso até o fim: quatro portas.
 
-> **mostrar → interpretar → priorizar → simular → provar**
+### §1.1 · O que ficou da camada Autônoma v4
 
-| Peça | Onde aparece | Usa tokens? | Regra |
-|---|---|---:|---|
-| Briefing Executivo | Visão Geral | não | números e recomendações calculados em código |
-| Pergunte à Central | global | não | respostas com contratos determinísticos e links de evidência |
-| Flight Recorder | Operação/Histórico | não | usa turnos, tools, duração e ledger já gravados |
-| Radar de Dinheiro | Resultados | não | `status=open`, valor preenchido e 7+ dias sem mudança |
-| Mapa Vivo | Ensinar | não | lê prompt, catálogo, FAQ, exemplos, mídias e tools |
-| Shadow Lab | Ensinar/agência | **sim, sob demanda** | só candidata, até 5 casos, 2 steps, 700 tokens/chamada, tools simuladas |
-| Modo E se? | Resultados | não | sensibilidade matemática; premissa sempre visível |
-| Recibo de Valor | Resultados | não | pipeline ≠ receita; horas são estimativa ajustável |
+A v4 mudou o verbo da Central para **mostrar → interpretar → priorizar →
+simular → provar**. Na v5 o verbo continua, com menos peças:
 
-### §1.2 · Camadas de leitura v4.1 — uma pergunta por vez
+| Peça | Na v5 | Onde |
+|---|---|---|
+| Briefing Executivo | ✅ fica | Estatísticas › Visão geral (“O que pede decisão · calculado sem tokens”) |
+| Pergunte à Central | ✅ fica | menu, `Ctrl K` |
+| Flight Recorder | ✅ fica | Estatísticas › Operação › Histórico |
+| Radar de Dinheiro | ✅ fica | Estatísticas › Operação › Funil (oportunidades paradas) |
+| Shadow Lab | ↪ substituído | **Teste** (laboratório) + **exame** na publicação |
+| Mapa Vivo | ↪ substituído | Ensinar › O que ela sabe + Como usar › Sua base |
+| Modo E se? · Recibo de Valor | ✖ fora do padrão | só entram se o cliente pedir, como subaba de Resultados |
+| Recuperação · Agenda | ✖ fora do padrão | só em agente que faz follow-up ou agenda, como subaba de Operação |
+
+Peça que sai do padrão continua em `assets/central-v4/` e pode voltar num cliente
+**como subaba dentro de uma das quatro abas**, nunca como aba nova. Se ela fizer
+sentido pra todos, aí é evolução de padrão (§9).
+
+### §1.2 · Camadas de leitura — uma pergunta por vez
 
 > **Capacidade não precisa virar simultaneidade.** Uma Central pode ter oito
 > features fortes e ainda ser confusa se todas aparecem na primeira rolagem.
 
-Contrato de densidade:
+Contrato de densidade da v5:
 
-| Área | Primeira leitura | Segundo nível |
+| Tela | Primeira leitura | Segundo nível |
 |---|---|---|
-| Visão Geral | veredito, uma prioridade e quatro números | sinais restantes recolhidos; Funil × Custos × Próximos Passos exclusivos |
-| Operação | uma subaba entre Agora × Recuperação × Histórico × Funil × Agenda | Recuperação abre em Agora × Eficácia × Resultados × Definição; uma leitura por vez |
-| Ensinar | tela de escolha com quatro intenções | uma ferramenta por vez + botão “Todas as opções”; ferramentas da agência recolhidas |
-| Resultados | Resumo | Radar × E se? × Recibo em subabas independentes |
-| Configurações | mapa de destinos | página específica só depois do clique |
+| Estatísticas › Visão geral | veredito, **uma** prioridade e quatro números de hoje | “Mais N pontos” recolhido |
+| Estatísticas › Operação | uma subaba entre Agora × Passagens × Histórico × Funil | filtros do histórico (todas, passou/resolveu, com trava, erros) |
+| Estatísticas › Resultados | Resumo (7 ou 30 dias) | Triagem em subaba própria |
+| Estatísticas › Sistema | agente e CRM, verde ou vermelho | divergências do CRM só quando existem |
+| Teste | a conversa | “No CRM isso faria” ao lado; detalhes de cada resposta sob demanda |
+| Ensinar | quadro da versão + Pedir mudança | Conversas reais × O que ela sabe; versões anteriores recolhidas |
+| Como usar | Passo a passo | Fluxo do cliente × Sua base × Equipe no CRM |
 
 Regras duras:
 
-1. **Só uma análise especializada renderiza por vez.**
+1. **Só uma análise renderiza por vez.**
 2. **Sinal secundário começa recolhido.**
 3. **Estado sem dados é uma explicação, não um gráfico cheio de zeros.**
 4. **Mobile pode ter scroll horizontal dentro da subnavegação; o documento não
-   pode ter overflow.** Prove `scrollWidth === clientWidth`.
-5. A URL profunda continua funcionando (`/resultados#radar`,
-   `/operacao?aba=agenda`).
+   pode ter overflow.** Prove `scrollWidth === clientWidth` em 375px, em todas
+   as rotas e nos dois temas.
+5. A URL profunda continua funcionando (`/operacao?aba=passagens`,
+   `/resultados#conversao`, `/ensinar?ver=sabe#item-<id>`).
+6. **Atualizar é manual** (botão “Atualizar”). Nada de polling no CRM.
 
-🩸 **Dor que forçou a v4.1:** no dogfood, as features foram aprovadas, mas o
-cliente percebeu excesso de informação por tela. O problema não era “o que
-existe”; era “tudo existir visualmente ao mesmo tempo”. A cura foi divulgação
-progressiva, preservando 100% das capacidades.
+🩸 **Dor que forçou a v4.1 (continua valendo):** no dogfood as features foram
+aprovadas, mas o cliente sentiu excesso de informação por tela. O problema não
+era o que existia, era tudo aparecer ao mesmo tempo. A cura foi divulgação
+progressiva.
 
-🩸 **Falha fechada também é UX:** no primeiro smoke em produção, `/api/live`
-recebeu 401 do GHL. A tela antiga podia nascer verde antes da resposta. A v3
-mostra “verificando” e só declara saúde depois das fontes; erro de conector vira
-atenção explícita. Nunca derive “saudável” da ausência temporária de dados.
+🩸 **Falha fechada também é UX:** no primeiro smoke da v3 em produção, `/api/live`
+recebeu 401 do GHL e a tela antiga podia nascer verde antes da resposta. Mostre
+“verificando” e só declare saúde depois das fontes; erro de conector vira atenção
+explícita. Nunca derive “saudável” da ausência temporária de dados.
 
-🩸 **Tipografia e hover também são contrato:** o primeiro deploy da v3 ainda
-herdou uma display pesada e cards que “pulavam” ou brilhavam sem indicar ação.
-No dogfood de 23/07/2026, a display virou Manrope 500–700; só elemento clicável
-recebe `interactive-card`, com mudança sutil de borda/superfície e foco visível.
-Card informativo fica imóvel. Movimento não pode ser a única pista de clique.
+🩸 **Tipografia e hover também são contrato:** display Manrope 500–700; só
+elemento clicável recebe `interactive-card`, com mudança sutil de
+borda/superfície e foco visível. Card informativo fica imóvel. Movimento não
+pode ser a única pista de clique.
 
-**+ o TEMA claro/escuro** é padrão em todas (§8). **+ o organismo** (guardião diário, analista
-semanal, auditora de funil) roda por trás e alimenta Visão Geral e Ao Vivo — o cliente não configura,
-só colhe.
+**+ o TEMA claro/escuro** é padrão (§8). **+ o organismo** (guardião diário,
+analista semanal, auditora de funil) roda por trás e alimenta Estatísticas — o
+cliente não configura, só colhe.
 
 > 🩸 **Por que o motor é invisível:** o cliente que vê "eval score 8.4/10, rubrica v3, holdout 8%"
-> não entende e assusta. O cliente que vê *"testei sua correção contra 11 casos e não publiquei
-> porque quebraria a Porta 3"* entende e confia. **A inteligência aparece como CONSEQUÊNCIA em
+> não entende e assusta. O cliente que vê *"testei sua correção contra 14 conversas e não publiquei
+> porque uma delas quebrou"* entende e confia. **A inteligência aparece como CONSEQUÊNCIA em
 > português, nunca como painel técnico.**
 
 ---
@@ -241,8 +258,9 @@ sabe rotear: correção de saudação → seção Saudação; correção de pre�
 **Como convive com o `prompt.md`:** as seções são os **12 blocos do `prompt.md` de fábrica**,
 renomeados pra linguagem de dono e agrupados por momento. O `render()` monta o prompt final juntando
 as seções na ordem canônica — **byte a byte igual ao `prompt.md` quando nada foi editado** (a mesma
-invariante da Escola). O eval-porteiro e o perfil dono×agência (a Escola, `ESCOLA.md`) valem igual
-aqui: o dono lê e ensina; só a agência edita texto cru.
+invariante da Escola). O eval-porteiro vale igual aqui. **Na v5 ninguém edita texto cru pela
+Central:** o dono pede e a IA muda o rascunho (§6); mudança de regra de atendimento vira pedido pra
+Control Gestão, que mexe no repositório.
 
 > 🔷 **"Fora do escopo" é a trava de recusa da Continuare, e a casa adota.** Uma seção que lista o
 > que a IA **não** faz e devolve uma recusa educada. Na clínica era *"não dá diagnóstico, não fala
@@ -302,30 +320,71 @@ consulta quando alguém perguntar."* — a mesma lógica de "cérebro editável"
 
 ---
 
-## §6 · ENSINAR A IA — testar e corrigir no MESMO fluxo 🔷 + o motor 🏠
+## §6 · ENSINAR A IA — pedir, testar, corrigir e publicar com exame 🏠
 
-**A Continuare fundiu testar e corrigir; a casa adota o fluxo E mantém o motor.**
+**Na v5 ninguém edita texto à mão, nem o dono, nem a agência pela Central.** A
+equipe do cliente fala com uma IA (o **curador**, com a chave do cliente) e ela
+muda o rascunho. O WhatsApp só muda depois do exame. É o fluxo da InovPay:
 
-O cliente conversa com a IA no laboratório (sandbox, nada é salvo). Quando ela responde torto, ele
-corrige **ali mesmo** — não muda de tela. A correção passa pela **régua §2** (que decide o destino) e
-vira **proposta**. Ele confirma. **E é aqui que o motor da casa entra, invisível:**
+```
+Teste ── resposta errada? ── Corrigir (como deveria ser + por quê) ─┐
+Conversas reais (diário, PII mascarada) ── Corrigir ────────────────┤
+Pedir mudança (texto + até 3 arquivos ou links) ────────────────────┤
+                                                                    ▼
+                         CURADOR decide o destino (régua §2 aplicada à base)
+   ┌──────────────┬───────────────────┬──────────────────────┬───────────────┐
+   │ base         │ nova_informacao   │ control_gestao       │ recusado      │
+   │ troca EXATA  │ informação curta  │ regra de atendimento,│ o que o       │
+   │ de trecho    │ nova (seção de    │ roteiro, tags, tarefa│ cliente nunca │
+   │ num texto    │ informações)      │ nova → vira pedido   │ muda (preço,  │
+   │              │                   │ pra Control Gestão   │ taxa, senha…) │
+   └──────┬───────┴─────────┬─────────┴──────────────────────┴───────────────┘
+          ▼                 ▼             (+ "pergunta": falta dado, ela pergunta)
+       RASCUNHO  ──  Testar o rascunho (Teste com versão = rascunho)
+          ▼
+   Publicar com exame: roda os cenários do eval com o rascunho.
+   Cenário que falha roda mais 2 vezes e precisa passar nas duas.
+          ▼
+   passou → vira a versão no ar (histórico de 20, "voltar para esta")
+   falhou → nada muda no WhatsApp e a tela mostra a conversa que quebrou
+```
 
-| Etapa | Continuare | A casa mantém |
-|---|---|---|
-| testar | ✅ chat sandbox | ✅ igual |
-| classificar destino | regra / exemplo / recusado | **a régua §2 completa** (6 destinos) |
-| propor | ✅ proposta antes de aplicar | ✅ igual |
-| **provar** | ❌ só confirmação humana | ✅ **eval-porteiro: roda os cenários, BLOQUEIA se quebrar** |
-| aplicar | ✅ versionado | ✅ igual + rollback |
+| Etapa | Contrato |
+|---|---|
+| testar | aba **Teste**: mesma assistente, ferramentas e travas, numa porta em memória; nada vai pro CRM |
+| corrigir | botão **Corrigir** embaixo de cada resposta (Teste ou conversa real): *como deveria ser* + *por que está errado* |
+| classificar | o curador escolhe o destino; o que é regra de atendimento nunca vira texto da base, vira pedido pra Control Gestão |
+| escrever | troca **exata** de trecho (o resto do texto fica idêntico) e `validarTexto()` em código; mostra antes × depois e pode **desfazer** |
+| provar | **exame = eval-porteiro**: os cenários de aceite do cliente com o rascunho; reprovou, não publica |
+| aplicar | versão nova no Redis do agente (`base:vigente`); o atendimento lê a cada turno (cache de 10 s); voltar versão é um clique |
 
-> 🩸 **O eval-porteiro é inegociável, e é a única coisa que a Continuare não tem.** Eles confiam na
-> confirmação humana. Mas humano aprova sem ler — e foi assim que a casa quase publicou a regressão
-> da Porta 3 (nota 10→2 numa "melhoria" inocente, `comum/EVALS.md` §8). O porteiro rodou os 10
-> cenários, viu a queda e **não deixou publicar**. **Adotar o fluxo deles sem o porteiro nosso seria
-> trocar segurança por beleza — exatamente o que o mestre disse pra não fazer.**
+**Material para ensinar:** até 3 arquivos (PDF, Word `.docx`, texto, Markdown,
+CSV, imagem; 3 MB no total) ou 3 links públicos (site, Google Docs ou Planilhas
+com "qualquer pessoa com o link"). Vira texto uma vez; o arquivo não é guardado.
+O que é proibido (preço, taxa, senha, dado pessoal) não entra mesmo que esteja
+no material. Link para localhost ou IP interno é bloqueado.
 
-Detalhe completo do fluxo, telas, travas e o modelo de dados: **`ESCOLA.md`** (o dossiê da aba) e
-**`assets/escola/`** (o código). Este arquivo define o **padrão**; a Escola é a **implementação**.
+**Onde mora o editável:** blocos do prompt marcados com
+`<!-- base:id -->…<!-- /base -->` mais os textos fixos que as ferramentas
+devolvem (encerramentos, aviso de fora do horário). Sem edição, o prompt
+renderizado é **byte a byte** o arquivo sem os marcadores — prove num teste.
+
+**E a régua §2, o catálogo §4, o RAG §5 e as mídias §7?** Continuam decidindo
+**onde um conhecimento mora**. Na v5 eles aparecem como destinos do curador e
+como grupos em *O que ela sabe*, nunca como aba nova. Cliente que cota preço
+ganha o catálogo como destino; cliente com manual de 40 páginas ganha o RAG
+como destino. A estrutura de quatro abas não muda.
+
+> 🩸 **O eval-porteiro é inegociável.** Humano aprova sem ler, e foi assim que a casa quase
+> publicou a regressão da Porta 3 (nota 10→2 numa "melhoria" inocente, `comum/EVALS.md` §8). Na
+> InovPay o exame tem 14 cenários; o ruído do modelo foi medido em ≈1 falha a cada 30 rodadas de um
+> cenário (08/10/2026), por isso o "2 de 3" no cenário que falhou: regressão de verdade falha
+> sempre, o acaso não barra edição boa.
+
+Código de referência: `assets/central-v5/central/app/(painel)/ensinar/` (tela) e
+`assets/central-v5/agente/lib/curador.ts`, `base-core.ts`, `base.ts`,
+`exame.ts`, `material.ts` (motor). `ESCOLA.md` e `assets/escola/` ficam como
+legado das Centrais v4.1.
 
 ---
 
@@ -368,6 +427,11 @@ Contar só a resposta final subestima justamente as conversas complexas.
 1,25× input e cache read = 10% do input. ElevenLabs Flash e Groq Whisper usam
 env configurável. Ao propagar, confirme preços oficiais e contrato do cliente.
 
+**Na v5 (InovPay)** o diário grava o custo do **modelo de linguagem** por execução
+(`custo: { totalBrl, modeloUsd, usdBrl, tokens }`, cotação em `COST_USD_BRL`). Transcrição de
+áudio, leitura de imagem e infraestrutura não entram, e a tela de Resultados diz isso. Modelo fora
+da tabela de preço do `execlog.ts` fica `não medido`, nunca estimado.
+
 🩸 **Primeira prova:** endpoint financeiro em produção em 23/07/2026, separando
 5 registros antigos como `sem custo`. A prova E2E final é uma conversa nova
 gerar `custo.totalBrl`; até isso acontecer, diga “ledger no ar, aguardando
@@ -385,6 +449,14 @@ que o mestre citou ("uns têm, outros não") como sintoma da falta de padrão. A
 - **script anti-flash** no `layout` — aplica o tema salvo antes do primeiro paint (sem piscar).
 - **respeita o SO** na 1ª visita; a escolha do usuário manda depois, salva em `localStorage`.
 - **toggle** no topo da barra lateral.
+- **referência:** `assets/central-v5/central/app/globals.css` (tokens) e as capturas em
+  `assets/central-v5/referencia/` (escuro, claro, 375px).
+
+**Identidade (v5):** a Central sai com a marca **Control Gestão** — logo claro/escuro no topo do
+menu e no login, com "Central de Inteligência" embaixo. O cliente aparece no cartão do menu (nome
+da assistente + nome do cliente), no título da aba do navegador e no título do login. Fontes:
+Manrope 500–700 nos títulos, Space Grotesk no texto, JetBrains Mono nos rótulos; acento ciano
+`#06b6d4`. Isso é estrutura, não muda por cliente.
 
 > 🩸 A lição que virou padrão: cor cravada no componente (`bg-white/[0.03]`, `#0a0a0a`, `text-white`)
 > vira texto invisível ou caixa preta no tema oposto. **Cor sempre em token; hover sempre em
@@ -427,10 +499,14 @@ perfis, ainda pisca. Certo é conter só o esqueleto.
 
 **Como a Central evolui sem virar "um de cada jeito":**
 
-**`SISTEMA_VERSAO`** (`lib/manifest.ts`) é a versão do **motor/padrão compartilhado** — não do
-conteúdo do cliente. Formato `AAAA.MM.DD-marco`. Toda mudança de **padrão** (aba nova, destino novo,
-trava nova) bump essa versão. A Enciclopédia da Central mostra a versão de cada cliente → **você bate
-o olho e sabe quem está atrás.**
+**`SISTEMA_VERSAO`** é a versão do **padrão compartilhado** — não do conteúdo do cliente. Na v5
+ela mora em `central/components/Sidebar.tsx` e aparece no rodapé do menu: `CENTRAL V5 · 4 ABAS`.
+(Nas Centrais v4.1 ela mora em `lib/manifest.ts`, formato `AAAA.MM.DD-marco`.) Toda mudança de
+**padrão** (aba nova, subaba nova pra todos, destino novo, trava nova) bump essa versão. Bate o olho
+no rodapé de cada cliente e você sabe quem está atrás.
+
+> A InovPay, que deu origem à v5, ainda mostra `CENTRAL V4.1 · 4 ABAS` no rodapé porque nasceu antes
+> de o padrão ganhar número. No próximo deploy dela, troque para `CENTRAL V5 · 4 ABAS`.
 
 > 🩸 A `SISTEMA_VERSAO` foi mandada em 5 documentos por meses **sem existir no código** — a doutrina
 > dizia "bump" e a constante não existia. Foi criada em 22/07/2026 (`ESCOLA.md`). **Doc que afirma
@@ -452,32 +528,37 @@ padrão bump versão e propaga. Não confunda — correção urgente local ≠ m
 
 ### 10.1 · Criar a Central de um cliente NOVO (a 1ª tarefa, a 2ª…)
 
+**Toda Central nova é igual à da InovPay.** O caminho é sempre este:
+
 ```
-1. o agente do cliente já está no ar?  (ghl/PLAYBOOK.md ou kommo/PLAYBOOK.md)
+1. o agente do cliente já está no ar e provado?  (ghl/PLAYBOOK.md ou kommo/PLAYBOOK.md)
       └─ SEM isso, não há o que a Central mostre. Pare e faça o agente primeiro.
-2. clone o template da Central (área-cliente) — NÃO monte aba por aba do zero
-3. aplique as camadas na ordem: central-v2 → central-v3 → Escola → central-v4.1
-      └─ central-v4.1 é SEMPRE a última e vence toda sobreposição visual.
-      └─ /cerebro final = assets/central-v4/central/app/cerebro/page.tsx
-4. aponte AGENT_URL / AGENT_SECRET pro agente do cliente
-5. troque o conteúdo, NUNCA a estrutura:
-      · cérebro (as seções) · catálogo (a planilha dele) · marca (logo, nome)
-6. confira o TEMA (claro/escuro funcionando), mobile 390px e perfil dono×agência
-7. rode o smoke v4.1: `/` · `/operacao` · `/cerebro` · `/resultados`
-   · `/configuracoes` · `/api/exec` em 200
-8. confirme o fail-closed: antes das fontes responderem mostra “verificando”;
-   CRM/API com erro nunca aparece como saudável
-9. gere uma conversa real e confirme `execucao.custo.totalBrl`
-10. valide divulgação progressiva: uma análise/ferramenta por vez, Radar com 2
-    prioridades e estado vazio didático
-11. rode `node scripts/audit-skill.mjs` na fonte da skill
-12. registre a SISTEMA_VERSAO do cliente no manifesto, com data
+      └─ o diário precisa gravar turnoLead, respostaIA, perfil, porta (motivo) e custo.
+2. copie assets/central-v5/central/ para <repo-do-agente>/central/
+      └─ NÃO monte aba por aba, NÃO aplique camadas antigas (v2 → v3 → Escola → v4.1).
+3. leve o lado do agente: assets/central-v5/agente/ (api/central, api/base, api/teste,
+   central-data, execlog, base-core, base, curador, material, exame, teste, conversas-reais)
+      └─ marque os blocos editáveis no prompt com <!-- base:id -->…<!-- /base -->
+4. troque o CONTEÚDO, nunca a estrutura (tabelas de assets/central-v5/INSTALAR.md):
+      · identidade do cliente (Sidebar, layout, login, package.json)
+      · lib/como-usar.ts inteiro · motivos/perfis/marcos (central-data ↔ types ↔ format)
+      · textos de negócio (intelligence, Resultados, Operação, Teste, Ensinar)
+5. rode o PORTÃO DE SOBRAS: o grep do INSTALAR.md tem que voltar vazio
+      └─ texto da InovPay na Central de outro cliente é vazamento, e o cliente percebe.
+6. CENTRAL_SECRET no agente; AGENT_URL / AGENT_SECRET / APP_PASSWORD / AUTH_SECRET na Central
+7. projeto Vercel próprio (central-<cliente>), Root Directory = central
+8. provas: typecheck + build · as 7 telas nos dois temas · 375px com
+   scrollWidth === clientWidth · fail-closed com segredo errado · /teste respondendo ·
+   um pedido real em /ensinar virando rascunho e passando (ou barrando) no exame
+9. gere uma conversa real e confirme `custo.totalBrl` no histórico
+10. rode `node scripts/audit-skill.mjs` na fonte da skill
+11. registre o cliente e a SISTEMA_VERSAO dele (CENTRAL V5 · 4 ABAS), com data
 ```
 
-> **Autoridade final:** o Patch 7 legado de `assets/escola/INSTALAR.md` ensina a
-> instalar a Escola numa Central antiga. Em cliente novo ele não define a UX
-> final. A v4.1 é aplicada por último e seu `/cerebro` de seis modos
-> (`inicio`, `ler`, `ensinar`, `mapa`, `laboratorio`, `editar`) é o contrato.
+> **Legado:** as Centrais que já estão no ar em v4.1 foram montadas na ordem
+> `central-v2 → central-v3 → Escola → central-v4.1`, com o `/cerebro` de seis
+> modos. Para mantê-las, siga `assets/central-v4/INSTALAR.md`. Para trazê-las ao
+> padrão, use o ritual de migração abaixo. Cliente novo nunca entra por esse caminho.
 
 ### 10.2 · Evoluir uma Central EXISTENTE (o ritual)
 
@@ -491,6 +572,13 @@ padrão bump versão e propaga. Não confunda — correção urgente local ≠ m
 5. propaga pros clientes ativos, um a um, redeployando (a 4ª perna)
 6. atualiza o manifesto de cada um com a versão nova + prova datada
 ```
+
+**Migrar uma Central v4.1 para a v5** é evolução de padrão (ritual acima), feita um cliente por
+vez: instale a v5 num projeto Vercel novo apontando pro mesmo agente, leve o lado do agente
+(`api/base`, `api/teste`, curador, exame), confira que o conteúdo do cliente chegou em
+`como-usar.ts` e nos textos da base, rode as provas do §10.1 e só então troque o link que o cliente
+usa. Peça da v4.1 que esse cliente usa de verdade (Recuperação, Agenda, Recibo) entra como subaba
+(§1.1), nunca como aba.
 
 > 🏛️ **Esta é a resposta ao pedido do mestre:** a skill **sabe** a primeira tarefa e a segunda. Criar
 > Central nova é o §10.1; evoluir é o §10.2. Não é adivinhação a cada projeto — é o mesmo caminho,
@@ -510,7 +598,8 @@ Central, invisíveis, e adotar o layout deles jamais pode custar qualquer uma:**
 3. **Anonimização de PII** — antes de guardar qualquer conversa (o celular-BR = CPF, etc.).
 4. **O organismo** — guardião diário (valida o mapa contra o CRM vivo), analista semanal, auditora de
    funil, alertas no grupo, diário estruturado. A Central **colhe** o que ele produz.
-5. **Perfil dono × agência** — o dono ensina em português e nunca vê o editor de prompt cru.
+5. **Ninguém edita prompt cru pela Central** — o dono ensina em português pelo curador (§6); regra
+   de atendimento, roteiro e travas mudam no repositório, pela Control Gestão, com eval.
 
 > 🩸 **A frase que resume o padrão:** *pegue a casca da Continuare e o motor da casa.* O cliente vê a
 > simplicidade deles; a segurança nossa roda escondida. Nenhuma das duas metades é opcional.
@@ -527,10 +616,16 @@ catálogo com import de planilha, mídias por categoria, testar+corrigir fundido
 guarda de recusa — **e ausência de eval-porteiro** (têm cenários que "rodam", sem nota/bloqueio; a
 trava deles é confirmação humana). Conteúdo da clínica **não** foi copiado — só o desenho de produto.
 
+**🏠 A Central da InovPay — o padrão v5** (`Control-Gesta0/inovpay`, pasta `central/`, commit
+`08daba9`, 08/10/2026; produção em `central-inovpay.vercel.app`). Copiada fiel em
+`assets/central-v5/`. Provas da cópia: `tsc` limpo, `next build` com 14 rotas, 7 telas × 2 temas ×
+1440/375px sem overflow.
+
 **🏠 A base da casa:**
 | Peça | Onde |
 |---|---|
-| A Escola (testar+corrigir, o motor, o modelo de dados) | `ESCOLA.md` + `assets/escola/` |
+| **Central v5 (padrão vigente)** | `assets/central-v5/` + `assets/central-v5/INSTALAR.md` |
+| A Escola (legado v4.1: testar+corrigir, o motor, o modelo de dados) | `ESCOLA.md` + `assets/escola/` |
 | Limiares medidos prompt × RAG × custo | `comum/CONTEXT-ENG.md` |
 | O eval como porteiro | `comum/EVALS.md` |
 | O organismo e a Central atual | `SKILL.md` §1 · `comum/ARQUITETURA.md` |

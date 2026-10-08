@@ -21,7 +21,15 @@ senão a tela fica pesada.
 
 ## O que é da Control Gestão e o que é do cliente
 
-A Central de IA (`assets/central-v3/`, `assets/central-v4/`) é entregue com a marca
-**do cliente**, não com a da Control Gestão. O `scripts/audit-skill.mjs` reprova o
-código da Central v4.1 que carregar o nome da casa. Use este logo em material da
-própria Control Gestão: proposta, Códex, relatório interno, apresentação de mentoria.
+**Desde 08/10/2026 a Central de IA sai com a marca da Control Gestão** (padrão v5,
+igual à da InovPay, `assets/central-v5/`): logo no topo do menu e no login, com
+"Central de Inteligência" embaixo. O cliente aparece no cartão do menu, no título
+da aba e no login. A Central usa duas versões do logo em
+`assets/central-v5/central/public/`: `logo-control-gestao.png` (tema claro) e
+`logo-control-gestao-dark.png` (tema escuro, com o azul clareado pra não sumir no
+fundo preto).
+
+As Centrais legadas (`assets/central-v3/`, `assets/central-v4/`) eram entregues
+com a marca do cliente, e o `scripts/audit-skill.mjs` continua reprovando o nome
+da casa no código delas. Use também este logo em material da própria Control
+Gestão: proposta, Códex, relatório interno, apresentação de mentoria.

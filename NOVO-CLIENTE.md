@@ -153,7 +153,7 @@ Cada projeto deve declarar onde está:
 | `CONSTRUINDO` | blueprint fechado | código, CRM-map e envs preparados |
 | `VALIDANDO` | build montado | typecheck, testes e evals verdes |
 | `PROVANDO` | validação local verde | E2E real, diário e CRM conferidos |
-| `CENTRALIZANDO` | agente provado | Central v4.1 canônica validada |
+| `CENTRALIZANDO` | agente provado | Central v5 (igual à InovPay) validada |
 | `RAMPANDO` | produto completo | 1 contato → 10 leads → todos |
 | `OPERANDO` | rampagem aprovada | monitoramento e rotina de melhoria ativos |
 | `BLOQUEADO` | falta real externa | pedido específico com instrução de obtenção |
@@ -172,18 +172,15 @@ motivo.
 7. Rodar evals: **10/10 ou não publica**.
 8. Deploy do agente.
 9. E2E com número real; conferir mensagem recebida, tools, CRM e diário.
-10. Instalar a Central na ordem canônica:
-    `central-v2 → central-v3 → Escola → central-v4.1`;
-    - base `area-cliente`;
-    - `assets/central-v2/`;
-    - `assets/central-v3/`;
-    - `assets/escola/` (motor, API e componentes);
-    - `assets/central-v4/` **por último**.
-11. Em qualquer sobreposição visual, **v4.1 vence**. O arquivo final de
-    `/cerebro` é `assets/central-v4/central/app/cerebro/page.tsx`, depois de
-    adaptar somente marca e seções do cérebro.
-12. Rodar as provas de `assets/central-v4/INSTALAR.md`.
-13. Configurar perfis dono × agência, treinar o time e iniciar rampagem.
+10. Instalar a Central **igual à da InovPay**: copiar `assets/central-v5/central/`
+    para `central/` no repositório do agente e levar `assets/central-v5/agente/`
+    (Central v5, `CENTRAL.md §10.1`). Não montar por camadas: a ordem antiga
+    `central-v2 → central-v3 → Escola → central-v4.1` é só das Centrais legadas.
+11. Trocar o conteúdo, nunca a estrutura: identidade do cliente, `lib/como-usar.ts`,
+    motivos/perfis/marcos e textos de negócio, pelas tabelas de
+    `assets/central-v5/INSTALAR.md`. Rodar o portão de sobras (grep vazio).
+12. Rodar as provas de `assets/central-v5/INSTALAR.md`.
+13. Treinar o time do cliente pela aba Como usar e iniciar rampagem.
 14. Registrar versão, evidências, pendências honestas e custo observado.
 
 ## 7 · Definição de pronto
@@ -198,11 +195,13 @@ motivo.
 - evals 10/10;
 - E2E em número real;
 - diário registrando tokens e custo;
-- Central v4.1 com cinco áreas, divulgação progressiva, Escola, Mapa Vivo,
-  Flight Recorder, Radar, Shadow econômico, E se? e Recibo;
-- dark/light e mobile 390px sem overflow;
+- Central v5 igual à da InovPay: Estatísticas (Visão geral, Operação,
+  Resultados, Sistema), Teste, Ensinar com exame e Como usar com o conteúdo do
+  cliente; portão de sobras vazio;
+- dark/light e mobile 375px sem overflow;
 - estados vazios didáticos, sem gráficos falsos zerados;
-- perfil dono sem editor cru e agência com acesso correto;
+- ninguém edita texto cru pela Central: Ensinar muda o rascunho e só publica
+  com exame;
 - manifesto com versão e prova datada;
 - instrução operacional entregue.
 

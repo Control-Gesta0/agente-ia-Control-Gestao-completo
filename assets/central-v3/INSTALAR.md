@@ -1,5 +1,10 @@
 # Central v3 — instalar o cockpit
 
+> ⚠️ **LEGADO desde 08/10/2026.** Cliente novo não usa este pacote: a Central é
+> construída igual à da InovPay, pelo `assets/central-v5/INSTALAR.md`
+> (`CENTRAL.md §10.1`). Use este guia só para manter uma Central antiga que já
+> está no ar ou para tirar dele uma peça que um cliente precise (`CENTRAL.md §1.1`).
+
 > Origem: dogfood da Control Gestão, 23/07/2026. Antes de propagar, o agente e a
 > Central passaram em typecheck/build, 74 asserções, dark/light, desktop/mobile
 > e smoke HTTP nas cinco áreas.

@@ -1,5 +1,10 @@
 # Central v4.1 — Autonomia em camadas
 
+> ⚠️ **LEGADO desde 08/10/2026.** Cliente novo não usa este pacote: a Central é
+> construída igual à da InovPay, pelo `assets/central-v5/INSTALAR.md`
+> (`CENTRAL.md §10.1`). Use este guia só para manter uma Central antiga que já
+> está no ar ou para tirar dele uma peça que um cliente precise (`CENTRAL.md §1.1`).
+
 > Origem: dogfood Control Gestão, 23/07/2026. Publicada e validada com dados reais:
 > typecheck do agente, 74 testes, build da Central, desktop, 390px, APIs e
 > Shadow E2E controlado.
