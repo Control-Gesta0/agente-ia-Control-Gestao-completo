@@ -148,6 +148,8 @@ await requireMarkers('assets/central-v5/INSTALAR.md', [
   'O que troca por cliente',
   'Portão de sobras',
   'Provas antes de entregar',
+  'Migrar uma Central v4.1 que já está no ar',
+  'byte a byte o arquivo original',
 ])
 
 await requireMarkers('assets/central-v5/central/components/Sidebar.tsx', [

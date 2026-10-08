@@ -127,7 +127,8 @@ do primeiro deploy, troque cada linha desta tabela.
 | `central/app/(painel)/(estatisticas)/configuracoes/page.tsx` | a linha do CRM (campos que o mapa confere) e o nome do CRM |
 | `central/components/FlightRecorder.tsx` e `central/app/(painel)/teste/page.tsx` | rótulos das ferramentas do agente (`definir_tipo`, `gravar_documento`…) e dos dados coletados |
 | `central/app/(painel)/teste/page.tsx` | sugestões de mensagem e as opções de perfil do laboratório (`novo` / `com_documento`) |
-| `central/app/(painel)/ensinar/page.tsx` | nomes dos cenários do exame e os exemplos de pedido |
+| `central/app/(painel)/ensinar/page.tsx` | nomes dos cenários do exame (`CENARIO`), a contagem "14" (troque por `Object.keys(CENARIO).length`), os `EXEMPLOS`, o **placeholder do campo de pedido** ("o horário do D+0…") e o aviso "Taxa e preço não entram" embaixo dele |
+| `central/app/(painel)/como-usar/page.tsx` | o "14 conversas de teste" de `CAMINHO` e os pronomes da assistente (ela/ele) nos títulos |
 | `central/components/CentralCommand.tsx` e `CorrigirPainel.tsx` | os `placeholder` de exemplo |
 | `central/lib/demo-data.json` | gerar de novo com `npx tsx scripts/demo-central.ts` no agente do cliente |
 
@@ -168,7 +169,7 @@ importam peças do agente da InovPay (`config`, `ghl`, `crm-map`, `crm-check`,
    original ele acusa 23 arquivos com texto da InovPay, contando o
    `demo-data.json`):
    ```bash
-   grep -rniE "inovpay|maquininha|estorno|split de|boleto|portal_|com_documento" central lib api scripts \
+   grep -rniE "inovpay|maquininha|estorno|split de|boleto|portal_|com_documento|d\+0|pix por|taxa e preço" central lib api scripts \
      --include=*.ts --include=*.tsx --include=*.json --include=*.mjs | grep -v package-lock
    ```
 5. Variáveis do agente: `CENTRAL_SECRET` (`openssl rand -hex 32`) e
@@ -179,6 +180,55 @@ importam peças do agente da InovPay (`config`, `ghl`, `crm-map`, `crm-check`,
 7. Projeto Vercel próprio (`central-<cliente>`) com **Root Directory =
    `central`**. No agente, redirecione `/` e `/painel` pra URL da Central.
 8. Provas (abaixo). Só depois disso a Central vai pro cliente.
+
+## Migrar uma Central v4.1 que já está no ar
+
+Receita provada em 08/10/2026 no Filipe Oliveira (GHL, PR
+`Control-Gesta0/filipe-oliveira-ia#1`) e na Roberta Veloso (GHL, com Escola e
+Documentos, PR `Control-Gesta0/roberta-veloso-ia#22`). Os PRs ficam sem merge
+até o deploy e o eval completo; use os dois como modelo de código e de descrição.
+
+**No agente**
+1. Marque no prompt os textos que a equipe do cliente pode pedir para mudar
+   (`<!-- base:id -->…<!-- /base -->`, inline ou em linha própria). Roteiro,
+   preço, saudações aprovadas pelo cliente, follow-up, tags e quando encaminhar
+   ficam **fora** (viram pedido para a Control Gestão no curador).
+2. `lib/base-core.ts` com os `ITENS` do cliente e `validarTexto` usando as
+   travas do `guards` dele (exporte a lista de regras). Escreva o teste que
+   prova: **sem edição, o prompt renderizado é byte a byte o arquivo original.**
+   Confira também que todos os textos padrão passam nas travas (se um falhar,
+   nenhuma edição nele vai passar).
+3. `lib/base.ts` igual ao template. No `createBrain`, a opção `base:
+   baseVigente` resolve o prompt a cada conversa; passe-a no inbound e no
+   follow-up. Todo lugar que lia `loadPrompt()` para mandar ao modelo passa a
+   usar o prompt renderizado (o arquivo agora tem marcadores).
+4. Exame: se os cenários moram num script de CLI, mova para um módulo puro
+   (`evals/cenarios.ts`) e o executor para `lib/evals-runner.ts`, aceitando o
+   prompt candidato; se o cliente já tem um `lib/evals.ts` servidor, só
+   acrescente `prompt`, `fatos` (para o juiz não chamar fato novo de
+   alucinação) e `onProgresso`. A CLI tem que sair com a mesma saída.
+   Concorrência do exame: cabe nos 300 s sem estourar o limite de tokens por
+   minuto da conta (8 a 11 em 20–25 cenários).
+5. `lib/teste.ts` com a porta em memória do eval; `lib/curador.ts` com o
+   `SISTEMA` reescrito para o negócio do cliente; `lib/material.ts`,
+   `lib/conversas-reais.ts` (com os campos do `ExecEntry` dele),
+   `lib/central-auth.ts`, `api/base.ts`, `api/teste.ts`, `vercel.json`.
+
+**Na Central**
+6. `git mv` das telas de estatística para `app/(painel)/(estatisticas)/` (ou
+   `app/(estatisticas)/` se o layout raiz já tem o menu). Subpáginas da v4.1
+   (funil, habilidades, sistema) ficam no segundo nível de Sistema; Recuperação
+   fica como subaba de Operação. `/cerebro` redireciona para `/ensinar`.
+7. Peça da v4.1 que o cliente usa de verdade e que não é estatística (ex.:
+   Documentos/base de conhecimento da Roberta) fica no **segundo nível do
+   Ensinar** (rota própria, link em "O que ela sabe", menu marcando Ensinar).
+   Escola, perfis agência × dono e o exame da agência saem da tela; os
+   endpoints podem ficar no agente.
+8. Copie Teste, Ensinar e Como usar da Central de um cliente já migrado com
+   negócio parecido (não da InovPay crua) e rode as tabelas acima.
+9. Se o cliente tem um agente local de desenvolvimento (Redis emulado, CRM e
+   OpenAI falsos, como o `scripts/agente-local.ts` da Roberta), registre
+   `/api/base` e `/api/teste` nele e teste a Central contra o código real.
 
 ## Provas antes de entregar
 
