@@ -60,6 +60,26 @@ const requiredFiles = [
   'RECUPERACAO.md',
   'comum/DIAGNOSTICO.md',
   'comum/OPERACAO-VISUAL.md',
+  'assets/central-v5/INSTALAR.md',
+  'assets/central-v5/central/components/Sidebar.tsx',
+  'assets/central-v5/central/components/StatsNav.tsx',
+  'assets/central-v5/central/components/ExecutiveDashboard.tsx',
+  'assets/central-v5/central/components/CorrigirPainel.tsx',
+  'assets/central-v5/central/components/Logo.tsx',
+  'assets/central-v5/central/app/(painel)/teste/page.tsx',
+  'assets/central-v5/central/app/(painel)/ensinar/page.tsx',
+  'assets/central-v5/central/app/(painel)/como-usar/page.tsx',
+  'assets/central-v5/central/app/globals.css',
+  'assets/central-v5/central/lib/como-usar.ts',
+  'assets/central-v5/central/lib/types.ts',
+  'assets/central-v5/central/public/logo-control-gestao.png',
+  'assets/central-v5/central/public/logo-control-gestao-dark.png',
+  'assets/central-v5/agente/api/central.ts',
+  'assets/central-v5/agente/api/base.ts',
+  'assets/central-v5/agente/api/teste.ts',
+  'assets/central-v5/agente/lib/central-data.ts',
+  'assets/central-v5/agente/lib/curador.ts',
+  'assets/central-v5/agente/lib/exame.ts',
   'assets/central-v4/INSTALAR.md',
   'assets/central-v4/central/components/FocusNav.tsx',
   'assets/central-v4/central/components/ExecutiveDashboard.tsx',
@@ -85,7 +105,8 @@ await requireMarkers('SKILL.md', [
   'NOVO-CLIENTE.md',
   'mentor E executor',
   'Evals antes de deploy de prompt',
-  'Central **v4.1 canônica**',
+  'Central **v5 canônica (igual à InovPay)**',
+  'assets/central-v5/',
   'UI-ONLY NÃO É HUMAN-ONLY',
 ])
 
@@ -101,7 +122,8 @@ await requireMarkers('NOVO-CLIENTE.md', [
   'GoHighLevel, Kommo ou ainda não escolheu CRM?',
   'A skill tem obrigação de barrar',
   'Máquina de estados do projeto',
-  'central-v2 → central-v3 → Escola → central-v4.1',
+  'Instalar a Central **igual à da InovPay**',
+  'portão de sobras',
   '10/10 ou não publica',
   'Nunca use “no ar” como sinônimo de “deploy respondeu 200”',
 ])
@@ -114,9 +136,41 @@ await requireMarkers('ONBOARDING.md', [
 ])
 
 await requireMarkers('CENTRAL.md', [
-  'central-v2 → central-v3 → Escola → central-v4.1',
-  'central-v4.1 é SEMPRE a última',
-  'uma análise/ferramenta por vez',
+  'O PADRÃO VIGENTE É A CENTRAL v5',
+  'Toda Central nova é igual à da InovPay',
+  'PORTÃO DE SOBRAS',
+  'Só uma análise renderiza por vez',
+  'ninguém edita texto à mão',
+])
+
+await requireMarkers('assets/central-v5/INSTALAR.md', [
+  'O que NÃO muda de um cliente pro outro',
+  'O que troca por cliente',
+  'Portão de sobras',
+  'Provas antes de entregar',
+])
+
+await requireMarkers('assets/central-v5/central/components/Sidebar.tsx', [
+  "label: 'Estatísticas'",
+  "label: 'Teste'",
+  "label: 'Ensinar'",
+  "label: 'Como usar'",
+  "SISTEMA_VERSAO = 'CENTRAL V5 · 4 ABAS'",
+])
+
+await requireMarkers('assets/central-v5/central/components/StatsNav.tsx', [
+  "label: 'Visão geral'",
+  "label: 'Operação'",
+  "label: 'Resultados'",
+  "label: 'Sistema'",
+])
+
+await requireMarkers('assets/central-v5/central/app/(painel)/ensinar/page.tsx', [
+  "type View = 'conversa' | 'reais' | 'sabe'",
+])
+
+await requireMarkers('assets/central-v5/central/components/Logo.tsx', [
+  'Control Gestão',
 ])
 
 await requireMarkers('RECUPERACAO.md', [
@@ -176,7 +230,7 @@ for (const path of codeFiles) {
   }
 }
 if (!failures.some(item => item.includes('identidade proibida'))) {
-  pass('assets v4.1 sem identidade Control Gestão/controlgestao/Metrik/Bia')
+  pass('assets v4.1 (legado) sem identidade Control Gestão/controlgestao/Metrik/Bia')
 }
 
 console.log(`\nAUDITORIA agente-ia-control-gestao-completo`)
@@ -188,4 +242,4 @@ if (failures.length) {
   process.exit(1)
 }
 
-console.log('✅ Skill íntegra: protocolo Professor + Executor e Central v4.1 canônica.')
+console.log('✅ Skill íntegra: protocolo Professor + Executor e Central v5 canônica (padrão InovPay).')

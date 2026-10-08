@@ -67,6 +67,7 @@ add_message (Kommo) → /api/inbound (200 imediato)
 - **Desenho B / uazapi / voz:** use o template do curso (`agente-ia-crm/assets/kommo`).
 - **Follow-up:** não incluído. Em WABA, toque depois de 24h exige template aprovado
   (`kommo/PEGADINHAS.md §9`) e o motor precisa de fila com claim atômico (§10).
-- **Central / Escola:** instalar depois, pela ordem canônica do `CENTRAL.md`.
+- **Central:** instalar depois, igual à da InovPay (`assets/central-v5/`, `CENTRAL.md §10.1`).
+  O `api/central.ts` de referência lê oportunidades do GHL; no Kommo, troque essa leitura pela de leads do pipeline.
 - **Responses API (raciocínio + tools):** só Chat Completions com reasoning none
   (`comum/PEGADINHAS.md §50`). Troque o adapter se o bake-off pedir.

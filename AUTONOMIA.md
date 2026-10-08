@@ -188,7 +188,7 @@ ONDA 3 — o prêmio grande (só depois das ondas 1-2 provarem o padrão)
 | Followup gerado por IA com cadência | `lib/followup.ts` | ✅ |
 | Eval-porteiro (bloqueia deploy que quebra) | `lib/evals.ts` + `api/prompt.ts` | ✅ |
 | Escola Fase 0 (captura + triagem + trava de perfil) | `assets/escola/` | ✅ |
-| Central se explica (Briefing, Pergunte à Central, Flight Recorder) | `assets/central-v4/` | ✅ |
+| Central se explica (Briefing, Pergunte à Central, Flight Recorder) | `assets/central-v5/` (padrão; antes `assets/central-v4/`) | ✅ |
 | Ledger de custo por execução | `lib/cost.ts` | ✅ |
 
 > A casa já é forte em **auto-operação** (rotinas rodando) e **auto-explicação** (a Central conta). Os buracos de autonomia estão em **auto-serviço do cliente** (§2.1, §2.3, §2.4) e **auto-cura visível** (§2.2, §2.7, §2.8) — e em **um** buraco interno grande: a propagação da frota (§3.1).

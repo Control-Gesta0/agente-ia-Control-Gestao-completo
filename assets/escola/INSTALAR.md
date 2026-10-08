@@ -1,5 +1,10 @@
 # INSTALAR a ESCOLA em outro cliente
 
+> ⚠️ **LEGADO desde 08/10/2026.** Cliente novo não usa este pacote: a Central é
+> construída igual à da InovPay, pelo `assets/central-v5/INSTALAR.md`
+> (`CENTRAL.md §10.1`). Use este guia só para manter uma Central antiga que já
+> está no ar ou para tirar dele uma peça que um cliente precise (`CENTRAL.md §1.1`).
+
 Guia de instalação da aba **"Ensinar a IA"** (Fase 0 — A CAIXA) num cliente que
 já tem o agente serverless de pé. Mapa do asset e tabela de placeholders:
 [README.md](README.md).

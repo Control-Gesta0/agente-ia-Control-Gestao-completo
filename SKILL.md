@@ -1,6 +1,6 @@
 ---
 name: agente-ia-control-gestao-completo
-description: "Skill COMPLETA (interna Control Gestão) de agentes de IA SDR em CRM sem n8n - GoHighLevel E Kommo no mesmo lugar. LLM + Vercel serverless + Upstash Redis: atende WhatsApp, entende audio/imagem/PDF, responde por voz, qualifica, move funil, agenda, faz followup/recuperacao, rastreia origem/UTM e roda a governanca (guardiao diario, analista semanal, auditora de funil, diario de execucoes com custo, Central de IA do cliente no padrao CENTRAL.md v4.1, cerebro editavel com o eval como porteiro, ESCOLA). Todo texto que o lead le passa pelo filtro de TOM HUMANO (skill humanizer, com copia embutida) antes de virar prompt, followup ou template. MODO PROFESSOR + EXECUTOR: diagnostica antes de construir, explica trade-off, corrige com evidencia medida e leva ate producao com prova. Use para QUALQUER trabalho de agente de IA em CRM - construir, replicar, depurar, evoluir prompt/evals/custo/Central, auditar arquitetura ou ensinar."
+description: "Skill COMPLETA (interna Control Gestão) de agentes de IA SDR em CRM sem n8n - GoHighLevel E Kommo no mesmo lugar. LLM + Vercel serverless + Upstash Redis: atende WhatsApp, entende audio/imagem/PDF, responde por voz, qualifica, move funil, agenda, faz followup/recuperacao, rastreia origem/UTM e roda a governanca (guardiao diario, analista semanal, auditora de funil, diario de execucoes com custo, Central de IA do cliente no padrao CENTRAL.md v5, igual a da InovPay, cerebro editavel com o eval como porteiro, ESCOLA). Todo texto que o lead le passa pelo filtro de TOM HUMANO (skill humanizer, com copia embutida) antes de virar prompt, followup ou template. MODO PROFESSOR + EXECUTOR: diagnostica antes de construir, explica trade-off, corrige com evidencia medida e leva ate producao com prova. Use para QUALQUER trabalho de agente de IA em CRM - construir, replicar, depurar, evoluir prompt/evals/custo/Central, auditar arquitetura ou ensinar."
 ---
 
 # Agente de IA em CRM sem n8n (Control Gestão) — a skill COMPLETA (GHL + Kommo)
@@ -58,7 +58,8 @@ Clone **uma vez por sessão**, na primeira vez que precisar de qualquer referên
 | Passo a passo do CRM | `ghl/PLAYBOOK.md` · `kommo/PLAYBOOK.md` |
 | Bug específico do CRM | `ghl/PEGADINHAS.md` · `kommo/PEGADINHAS.md` |
 | Condução de cliente novo | `NOVO-CLIENTE.md` + `QUESTIONARIO-CLIENTE.md` |
-| Código da Central / ESCOLA / briefing | `assets/central-v4/`, `assets/escola/`, `assets/daily-briefing/`, `assets/operations-room/`, `assets/booking-alert/`, `assets/onboarding/` (cada um tem `INSTALAR.md`) |
+| **Construir a Central de um cliente (sempre igual à da InovPay)** | **`CENTRAL.md` + `assets/central-v5/` (`INSTALAR.md`)** |
+| Outros pacotes (Central v4.1 legada, Escola, briefing, onboarding) | `assets/central-v4/`, `assets/escola/`, `assets/daily-briefing/`, `assets/operations-room/`, `assets/booking-alert/`, `assets/onboarding/` (cada um tem `INSTALAR.md`) |
 | Auditar a própria skill | `scripts/audit-skill.mjs` |
 
 ---
@@ -144,11 +145,11 @@ Um organismo serverless que vive **um por cliente**. Cada peça resolve uma dor 
 | 🧠 **Consciência** | Relatório semanal (segundas) com números calculados **em código** + Codex lendo as conversas → destaque + até 3 sugestões de evolução do prompt (nunca aplicadas sozinhas) | `lib/analyst.ts` |
 | 🌅 **Briefing executivo** | Relatório diário às 07h com placar comparativo, custo, conversão, falhas, destaques e três ações objetivas no grupo de alertas | `lib/daily-report.ts` + `api/daily-report.ts` |
 | 🔍 **Olhos no negócio** | Auditoria do funil COMPLETO (sextas): com IA × sem IA, gargalo, campo vazio, lead parado | `lib/auditor.ts` |
-| 📊 **Vitrine** | **Central v4.1 Autônoma em camadas**: 5 áreas + Briefing, pergunta determinística, Flight Recorder, Radar, Mapa Vivo, Shadow econômico, simulador e Recibo — uma análise por vez | `area-cliente/` + `assets/central-v3/` + `assets/central-v4/` |
-| 🧠✏️ **Cérebro editável** | Cliente/time edita o prompt sem deploy — e **o eval é o porteiro**: só publica se passar | `lib/prompt-store.ts` + `lib/evals.ts` + `api/prompt.ts` + Central `/cerebro` |
-| 🎓 **Escola** ("Ensinar a IA") | O cliente corrige **em português**, a correção vira dado estruturado e triado (dado volátil vira **ticket, nunca prompt**) — e ele **nunca vê o editor cru** (perfil `dono` × `agencia`). **Status honesto: Fase 0 construída 22/07/2026 no dogfood da Control Gestão (GHL) — `tsc` limpo, 49/49 em `scripts/test-escola.ts`, `/cerebro` HTTP 200 com a trava de perfil de pé; sem prova em produção. Fases 1–3 (o alfaiate, o caderno, a faxina) ainda não** | `lib/escola-core.ts` + `lib/escola.ts` + `lib/roteador.ts` + `lib/perfil.ts` + `api/escola.ts` + Central `/cerebro` aba Ensinar · replicável em `assets/escola/` · dossiê `ESCOLA.md` |
+| 📊 **Vitrine** | **Central v5, igual à da InovPay**: 4 abas (Estatísticas com Visão geral/Operação/Resultados/Sistema · Teste · Ensinar · Como usar), identidade Control Gestão, Estatísticas com zero tokens, Ensinar sem edição manual e publicação só com exame — uma leitura por vez | `assets/central-v5/` (Centrais v4.1 antigas: `area-cliente/` + `assets/central-v3/` + `assets/central-v4/`) |
+| 🧠✏️ **Cérebro editável** | Cliente/time muda o que a IA sabe sem deploy — e **o eval é o porteiro**: só publica se passar. **Na Central v5 é a aba Ensinar:** ninguém edita à mão, a equipe pede em português e a IA (curador) muda o rascunho (`CENTRAL.md §6`) | `lib/prompt-store.ts` + `lib/evals.ts` + `api/prompt.ts` + Central `/cerebro` |
+| 🎓 **Escola** ("Ensinar a IA", legado das Centrais v4.1; na v5 quem faz isso é o curador) | O cliente corrige **em português**, a correção vira dado estruturado e triado (dado volátil vira **ticket, nunca prompt**) — e ele **nunca vê o editor cru** (perfil `dono` × `agencia`). **Status honesto: Fase 0 construída 22/07/2026 no dogfood da Control Gestão (GHL) — `tsc` limpo, 49/49 em `scripts/test-escola.ts`, `/cerebro` HTTP 200 com a trava de perfil de pé; sem prova em produção. Fases 1–3 (o alfaiate, o caderno, a faxina) ainda não** | `lib/escola-core.ts` + `lib/escola.ts` + `lib/roteador.ts` + `lib/perfil.ts` + `api/escola.ts` + Central `/cerebro` aba Ensinar · replicável em `assets/escola/` · dossiê `ESCOLA.md` |
 | 🧪 **Exame** | Certifica o cérebro antes de cada deploy: 10 cenários, juiz Codex, `exit 1` se < 7 | `scripts/evals.mjs` (CI) + `lib/evals.ts` (server-side) |
-| 🎮 **Laboratório** | "Testar ao vivo": chat sandbox no `/cerebro` com o prompt candidato e **tools em DRY-RUN** (zero efeito no CRM) | `lib/playground.ts` / `simulateChat` + `api/cerebro.ts` |
+| 🎮 **Laboratório** | "Testar ao vivo": chat sandbox com o prompt candidato e **tools em DRY-RUN** (zero efeito no CRM). **Na Central v5 é a aba Teste** (porta em memória, versão no ar ou rascunho) | v5: `lib/teste.ts` + `lib/port.ts` + `api/teste.ts` · v4.1: `lib/playground.ts` / `simulateChat` + `api/cerebro.ts` |
 | 📓 **Diário + ledger** | Toda execução registra quem, quando, tools, duração, tokens/cache, voz/STT e custo histórico em BRL. Registros antigos ficam “não medidos” | `lib/execlog.ts` + `lib/cost.ts` + `api/central?recurso=execucoes` |
 | 📖 **Manifesto** | O que o agente É, módulo a módulo, com `status` + `comoFunciona` + **prova com data**. Nada entra como `ativo` sem prova | `lib/manifest.ts` → Central `/sistema` e `/roadmap` |
 | 📕 **Códex** | A vitrine DESTE conhecimento: organismo, doutrina, **cicatrizes** (21 catalogadas na 1ª carga do Códex; hoje **38 comuns + 17 GHL + 18 Kommo**), evolução e laboratório — lê os `.md` reais via `npm run sync` (§7) | `clientes/controlgestao/codex/` → `codex-controlgestao.vercel.app` |
@@ -168,10 +169,11 @@ Um organismo serverless que vive **um por cliente**. Cada peça resolve uma dor 
 | Ativo | Onde |
 |---|---|
 | Template GHL (agente) | `clientes/controlgestao/agente-ia/` |
-| Template GHL (Central) | `clientes/controlgestao/area-cliente/` |
+| **Template da Central (padrão v5 = InovPay) — use SEMPRE este** | `assets/central-v5/` (`central/` + `agente/` + `referencia/` + `INSTALAR.md` com o que troca por cliente e o portão de sobras) |
+| Central do dogfood (v4.1, legado) | `clientes/controlgestao/area-cliente/` |
 | **Escola (Fase 0) — código replicável já sanitizado** | `assets/escola/` (`agente/` + `central/` + `INSTALAR.md` com os 7 patches) |
-| **Cockpit Central v3 + ledger — código replicável sanitizado** | `assets/central-v3/` (5 áreas, Manrope leve, hover sem salto, Ensinar guiado, custo por execução e `INSTALAR.md`) |
-| **Central Autônoma v4.1 — upgrade replicável sanitizado** | `assets/central-v4/` (Briefing, comando, Flight Recorder, Radar, Mapa Vivo, Shadow protegido, E se?, Recibo e `FocusNav` com divulgação progressiva) |
+| Cockpit Central v3 + ledger — legado | `assets/central-v3/` (5 áreas, Manrope leve, hover sem salto, Ensinar guiado, custo por execução e `INSTALAR.md`) |
+| Central Autônoma v4.1 — legado (fonte de peças opcionais, `CENTRAL.md §1.1`) | `assets/central-v4/` (Briefing, comando, Flight Recorder, Radar, Mapa Vivo, Shadow protegido, E se?, Recibo e `FocusNav` com divulgação progressiva) |
 | Template Kommo (agente) | `clientes/controlgestao/agente-ia-kommo/` |
 | Códex (engine multi-produto) | `clientes/controlgestao/codex/` |
 | Referências vivas no ar | `agente-ia-controlgestao.vercel.app` · `central-ia-controlgestao.vercel.app` · `agente-ia-kommo-controlgestao.vercel.app` · `codex-controlgestao.vercel.app` |
@@ -227,13 +229,13 @@ Todo o resto (`lib/*`, `api/*`, Central) é **motor compartilhado** — e por is
 
 | Arquivo | Leia quando | Contém |
 |---|---|---|
-| **`CENTRAL.md`** ⭐ | **Ao criar OU evoluir a Central de IA de qualquer cliente** · quando decidir **onde um conhecimento mora** · quando alguém for "fazer diferente num cliente" | **O PADRÃO-MÃE da Central** (v4.1 Autônoma em camadas, 23/07/2026): 5 áreas, decisão zero-token, divulgação progressiva, Flight Recorder, Radar, Mapa Vivo, Shadow protegido, ledger, fail-closed, dark/light/mobile e propagação. Motor em `central-v2/`; cockpit em `central-v3/`; autonomia em `central-v4/` |
+| **`CENTRAL.md`** ⭐ | **Ao criar OU evoluir a Central de IA de qualquer cliente** · quando decidir **onde um conhecimento mora** · quando alguém for "fazer diferente num cliente" | **O PADRÃO-MÃE da Central** (v5 = a Central da InovPay, 08/10/2026): 4 abas, Estatísticas zero-token, Teste, Ensinar pelo curador com exame, Como usar, identidade Control Gestão, fail-closed, dark/light/mobile e propagação. Código em `assets/central-v5/`; v2/v3/v4 são legado |
 | **`NOVO-CLIENTE.md`** ⭐ | **No início de TODO projeto novo e antes de copiar template** | Contrato Professor + Executor, rodadas de descoberta, autonomia, protocolo de bloqueio, máquina de estados, golden path e definição de pronto |
 | **`ONBOARDING.md`** ⭐ | **Depois da descoberta inicial e antes de construir** | Onboarding Compiler: uma entrada canônica gera diagnóstico, decisões, pendências, credenciais, prompt, CRM-map, evals e handoff; bloqueia dado inventado e projeto incompleto |
 | **`QUESTIONARIO-CLIENTE.md`** ⭐ | **Ao preparar os materiais e o formulário que o cliente preencherá** | Padrão canônico em três camadas: cinco documentos de negócio · decisões críticas da IA/resultado · descoberta técnica da Control Gestão. Define perguntas, experiência do cliente e gate de prontidão. **Inclui o pedido de 5–10 conversas reais boas — matéria-prima do few-shot de tom (§5.1)** |
 | **`RECUPERACAO.md`** ⭐ | Ao definir follow-up, instrumentar o agente ou montar a aba Recuperação | duas conversões (respondeu × concretizou), atribuição por toque/ciclo, fila, métricas, contrato do endpoint e definição de pronto |
 | **`FRONTEIRA.md`** | Ao decidir **o que construir a seguir** · quando alguém propuser uma feature nova | 47 propostas escaneadas em 8 frentes, julgadas por 3 lentes → **6 no pódio, 5 na 2ª onda, 7 no cemitério com o motivo** (pra ninguém reabrir). A ordem de compra que o júri bancou. Onde o agente está em relação ao estado da arte |
-| **`ESCOLA.md`** | Ao construir/evoluir a Central · quando o cliente pedir *"quero ajustar a IA sozinho"* · quando alguém propuser *"deixa ele editar o prompt"* | A aba **"Ensinar a IA"**: o cliente corrige, o sistema decide se vira prompt, exemplo, RAG ou ticket — **sem ele encostar no prompt**. Tela por tela com os textos reais, o pipeline do alfaiate, as 4 travas anti-quebra, o modelo de dados, o plano de 8,5 dias, os **riscos que ficam de pé (§8-B)** e a **FASE 0 JÁ CONSTRUÍDA (22/07/2026, GHL dogfood)** — código pronto e replicável em `assets/escola/`, 49/49 no teste de travas |
+| **`ESCOLA.md`** (legado das Centrais v4.1) | Ao manter uma Central v4.1 · quando o cliente pedir *"quero ajustar a IA sozinho"* · quando alguém propuser *"deixa ele editar o prompt"* | A aba **"Ensinar a IA"**: o cliente corrige, o sistema decide se vira prompt, exemplo, RAG ou ticket — **sem ele encostar no prompt**. Tela por tela com os textos reais, o pipeline do alfaiate, as 4 travas anti-quebra, o modelo de dados, o plano de 8,5 dias, os **riscos que ficam de pé (§8-B)** e a **FASE 0 JÁ CONSTRUÍDA (22/07/2026, GHL dogfood)** — código pronto e replicável em `assets/escola/`, 49/49 no teste de travas |
 | **`MONETIZACAO.md`** | Antes de renovar contrato · ao montar proposta · **antes de mostrar qualquer número de "lift" pro cliente** | 🚨 O **viés de seleção** que hoje infla a prova semanal, o holdout de 8 linhas que conserta, a escada de desfechos com o `n` de cada degrau, o baseline retroativo **que expira**, e por que atribuição de resultado — não qualidade — é o que mata contrato de IA |
 | **`ESCALA.md`** | Ao passar de ~10 clientes · ao pensar em produto vs. serviço | O que compõe a cada cliente novo e o que só soma, o fosso do portfólio, e o que quebra primeiro quando a carteira dobra |
 
@@ -256,7 +258,7 @@ Todo o resto (`lib/*`, `api/*`, Central) é **motor compartilhado** — e por is
 ## §4 · COMO EU CONDUZO UMA SESSÃO
 
 **🆕 Cliente novo (do zero ao ar):**
-`NOVO-CLIENTE.md` → `comum/DIAGNOSTICO.md` (Bloco 0 primeiro: **qual CRM?**) → **Onboarding Compiler** (`ONBOARDING.md`, recompilar até `readyForBuild:true`) → desenho comentado ("vamos fazer X porque Y; o trade-off é Z") → `ghl/PLAYBOOK.md` **ou** `kommo/PLAYBOOK.md` → **filtro de tom (§5.1)** → evals 10/10 → **E2E em número real** → Central **v4.1 canônica** → rampagem por tag → **ensinar o time a operar** (o que é o gate, como desligar a IA num lead com `atendimento-humano`, como ler a Central, como pedir ajuda). Tempo real com diagnóstico pronto: **~1 dia no GHL, ~meio dia no Kommo** (template pronto).
+`NOVO-CLIENTE.md` → `comum/DIAGNOSTICO.md` (Bloco 0 primeiro: **qual CRM?**) → **Onboarding Compiler** (`ONBOARDING.md`, recompilar até `readyForBuild:true`) → desenho comentado ("vamos fazer X porque Y; o trade-off é Z") → `ghl/PLAYBOOK.md` **ou** `kommo/PLAYBOOK.md` → **filtro de tom (§5.1)** → evals 10/10 → **E2E em número real** → Central **v5 canônica (igual à InovPay)** → rampagem por tag → **ensinar o time a operar** (o que é o gate, como desligar a IA num lead com `atendimento-humano`, como ler a Central, como pedir ajuda). Tempo real com diagnóstico pronto: **~1 dia no GHL, ~meio dia no Kommo** (template pronto).
 
 **🔥 "Algo quebrou":**
 Primeiro **ISOLAR**, sempre: *saiu execução em `/api/executions`?*
@@ -265,8 +267,8 @@ Primeiro **ISOLAR**, sempre: *saiu execução em `/api/executions`?*
 Nunca comece pelo código: 8 em cada 10 "o agente parou" são gatilho, gate, janela ou credencial.
 
 **✏️ "Quero mudar o prompt":**
-**Primeiro: quem está pedindo?** Se for o **CLIENTE**, ele não edita — a correção entra pela aba **"Ensinar a IA"** (`POST /api/escola {acao:'capturar'}`), é triada por regex (dado volátil vira **ticket**, não prompt) e **espera o lote**; **você** lê a fila e escreve o delta (`ESCOLA.md` §8 Fase 0). Abrir o textarea pro cliente é exatamente a armadilha que `ESCOLA.md` §1 documenta. O fluxo abaixo é o da **AGÊNCIA**:
-Entender o **objetivo** (o que o cliente quer que mude no resultado, não na frase) → mudar → **passar o texto novo pelo §5.1 (skill `humanizer`)** → **testar no sandbox** (`/cerebro`, feel) → `node scripts/evals.mjs` → **10/10? deploy**. Reprovou? **o eval te ensina o que quebrou** — inclusive a regressão que você não imaginava. Sugestão do analista semanal passa pelo mesmo portão **e pelo mesmo filtro de tom** — o analista escreve como IA por padrão, e o texto dele entra direto no prompt se ninguém filtrar.
+**Primeiro: quem está pedindo?** Se for o **CLIENTE**, ele não edita. Na **Central v5** a correção entra pela aba **Ensinar** (`POST /api/base {acao:'pedir'|'corrigir'|'corrigir_real'}`): o curador decide o destino, muda o rascunho por troca exata de trecho, manda regra de atendimento como pedido pra Control Gestão, recusa o proibido, e **só publica com exame** (`CENTRAL.md §6`). Nas Centrais v4.1 antigas ela entra pela Escola (`POST /api/escola {acao:'capturar'}`, triada por regex, espera o lote; `ESCOLA.md` §8 Fase 0). Abrir o textarea pro cliente é exatamente a armadilha que `ESCOLA.md` §1 documenta. O fluxo abaixo é o da **AGÊNCIA**:
+Entender o **objetivo** (o que o cliente quer que mude no resultado, não na frase) → mudar → **passar o texto novo pelo §5.1 (skill `humanizer`)** → **testar no sandbox** (aba Teste, `/teste`, na Central v5; `/cerebro` nas v4.1) → `node scripts/evals.mjs` → **10/10? deploy**. Reprovou? **o eval te ensina o que quebrou** — inclusive a regressão que você não imaginava. Sugestão do analista semanal passa pelo mesmo portão **e pelo mesmo filtro de tom** — o analista escreve como IA por padrão, e o texto dele entra direto no prompt se ninguém filtrar.
 
 **🎓 Mentorado aprendendo:**
 Comece pelo **mapa (§1)** → calibre o nível (`comum/DIAGNOSTICO.md` Bloco 5: já mexeu com API/webhook? sabe o que é variável de ambiente? já usou Vercel/Git?) → deixe ele **diagnosticar um cliente fictício** → só então código, com você revisando etapa por etapa e explicando o porquê. **Quem entende o organismo replica sozinho; quem decora comando trava no primeiro imprevisto.** Fecho de ciclo: o entregável dele é o **Códex do agente dele** (§7.5).
@@ -332,7 +334,7 @@ Tirar tell não é esterilizar. **Mantenha:** fala corrente ("tá", "pra", "dá 
 2. Rodar o FILTRO         → skill humanizer (ou humanizer/HUMANIZER.md) + os 8 tells acima
 3. Conferir o que sobrou  → nenhum preço, número, nome, regra ou porta pode ter sumido
                             (o filtro edita forma; fato que some é ERRO, não estilo)
-4. Sandbox /cerebro       → ler em voz alta: ainda soa a IA?
+4. Sandbox (aba Teste)    → ler em voz alta: ainda soa a IA?
 5. node scripts/evals.mjs → 10/10 incluindo o cenário "Tom humano"
 6. Deploy
 ```
@@ -388,7 +390,7 @@ Toda sessão que descobrir algo novo **escreve aqui na hora**, no arquivo certo 
 | Pergunta nova de discovery ou red flag | `comum/DIAGNOSTICO.md` |
 | **Padrão da Central / aba nova / onde um conhecimento mora** | **`CENTRAL.md`** |
 | Ideia de feature nova (ou reprovada, **com o motivo**) | `FRONTEIRA.md` |
-| Desenho da aba "Ensinar a IA" (o cliente corrigindo) | `ESCOLA.md` |
+| Desenho da aba Ensinar (o cliente corrigindo) | `CENTRAL.md §6` (v5) · `ESCOLA.md` (legado v4.1) |
 | Prova de valor, holdout, precificação, renovação | `MONETIZACAO.md` |
 | O que quebra ao dobrar a carteira | `ESCALA.md` |
 | Lei nova, postura, roteador | **este SKILL.md** |
