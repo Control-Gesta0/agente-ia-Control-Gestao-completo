@@ -578,7 +578,8 @@ vez: instale a v5 num projeto Vercel novo apontando pro mesmo agente, leve o lad
 (`api/base`, `api/teste`, curador, exame), confira que o conteúdo do cliente chegou em
 `como-usar.ts` e nos textos da base, rode as provas do §10.1 e só então troque o link que o cliente
 usa. Peça da v4.1 que esse cliente usa de verdade (Recuperação, Agenda, Recibo) entra como subaba
-(§1.1), nunca como aba.
+(§1.1), nunca como aba. A receita passo a passo, provada no Filipe e na Roberta em 08/10/2026, está
+em `assets/central-v5/INSTALAR.md` › "Migrar uma Central v4.1 que já está no ar".
 
 > 🏛️ **Esta é a resposta ao pedido do mestre:** a skill **sabe** a primeira tarefa e a segunda. Criar
 > Central nova é o §10.1; evoluir é o §10.2. Não é adivinhação a cada projeto — é o mesmo caminho,
